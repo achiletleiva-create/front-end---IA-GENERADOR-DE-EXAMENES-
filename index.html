@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Exámenes UCV/CIS</title>
+    <style>
+        :root {
+            --ucv-red: #ff0000;
+            --cis-blue: #0056b3;
+        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
+
+        /* Controles fuera de la hoja */
+        .controles {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 2px solid #ccc;
+            text-align: center;
+        }
+        @media print { .controles { display: none; } }
+
+        /* La Hoja A4 */
+        .hoja-a4 {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            margin: 10px auto;
+            background: white;
+            position: relative;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Encabezado con Logos */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-ucv { height: 60px; }
+        .logo-cis { height: 50px; }
+        
+        /* Títulos y Texto */
+        .titulo-examen {
+            text-align: center;
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .seccion-datos { font-size: 13px; line-height: 1.6; margin-bottom: 15px; }
+        .negrita { font-weight: bold; }
+
+        /* Tablas estilo S10/Presupuestos */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 5px;
+            text-align: left;
+        }
+        th { background-color: #f2f2f2; }
+
+        /* Pie de página (Barra decorativa azul) */
+        .footer-decoracion {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 200px;
+            height: 40px;
+            /* Simulamos las barritas azules del PDF */
+            background: repeating-linear-gradient(
+                90deg,
+                var(--cis-blue),
+                var(--cis-blue) 4px,
+                #fff 4px,
+                #fff 8px
+            );
+        }
+
+        @media print {
+            body { background: none; }
+            .hoja-a4 { margin: 0; border: none; box-shadow: none; width: 100%; }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controles">
+        <input type="text" id="tema" placeholder="Tema del examen..." style="padding: 8px; width: 250px;">
+        <button onclick="pedirIA()" style="padding: 8px 15px; cursor: pointer; background: #0056b3; color: white; border: none;">Generar Examen</button>
+        <button onclick="window.print()" style="padding: 8px 15px; cursor: pointer;">Imprimir a PDF</button>
+    </div>
+
+    <div class="hoja-a4" id="documento">
+        <!-- Encabezado -->
+        <div class="header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f3/Logo_UCV_2021.png" class="logo-ucv" alt="UCV">
+            <img src="https://cis.ucv.edu.pe/img/logo_cis.png" class="logo-cis" alt="CIS">
+        </div>
+
+        <div id="contenido-dinamico">
+            <!-- Aquí la IA meterá los datos -->
+            <div class="titulo-examen">EXAMEN MODELO DE COMPUTACIÓN III</div>
+            <div class="seccion-datos">
+                <p><span class="negrita">TEMA:</span> <span id="txt-tema">...</span></p>
+                <p><span class="negrita">OBJETIVO:</span> Generar un presupuesto detallado.</p>
+                <hr>
+                <p>DATOS DEL PROYECTO:</p>
+                <ul>
+                    <li>PRESUPUESTO: GENERADO POR IA</li>
+                    <li>FECHA: 2025</li>
+                </ul>
+            </div>
+            
+            <div id="area-preguntas">
+                <!-- Tablas generadas aquí -->
+            </div>
+        </div>
+
+        <!-- Pie de página decorativo -->
+        <div class="footer-decoracion"></div>
+    </div>
+
+    <script>
+        async function pedirIA() {
+            const tema = document.getElementById('tema').value;
+            const area = document.getElementById('area-preguntas');
+            area.innerHTML = "Generando estructura profesional...";
+
+            // Nota: Aquí pondrás la URL que te dará Render después
+            const response = await fetch('https://tu-app-en-render.onrender.com/generar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ tema: tema })
+            });
+
+            const data = await response.json();
+            // La IA nos enviará el código de las tablas listo
+            area.innerHTML = data.html;
+            document.getElementById('txt-tema').innerText = tema.toUpperCase();
+        }
+    </script>
+</body>
+</html>
