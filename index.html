@@ -11,7 +11,6 @@
         }
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
 
-        /* Controles fuera de la hoja */
         .controles {
             padding: 20px;
             background: #fff;
@@ -20,7 +19,6 @@
         }
         @media print { .controles { display: none; } }
 
-        /* La Hoja A4 */
         .hoja-a4 {
             width: 210mm;
             min-height: 297mm;
@@ -32,49 +30,46 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        /* Encabezado con Logos */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        .logo-ucv { height: 60px; }
-        .logo-cis { height: 50px; }
+        /* Logos con links estables */
+        .logo-ucv { height: 50px; }
+        .logo-cis { height: 45px; }
         
-        /* Títulos y Texto */
         .titulo-examen {
             text-align: center;
             text-decoration: underline;
             font-weight: bold;
             font-size: 14px;
             margin-bottom: 20px;
+            text-transform: uppercase;
         }
         .seccion-datos { font-size: 13px; line-height: 1.6; margin-bottom: 15px; }
         .negrita { font-weight: bold; }
 
-        /* Tablas estilo S10/Presupuestos */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 12px;
+            font-size: 11px;
         }
         th, td {
-            border: 1px solid #999;
-            padding: 5px;
+            border: 1px solid #000;
+            padding: 4px;
             text-align: left;
         }
-        th { background-color: #f2f2f2; }
+        th { background-color: #eee; text-align: center; }
 
-        /* Pie de página (Barra decorativa azul) */
         .footer-decoracion {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 200px;
-            height: 40px;
-            /* Simulamos las barritas azules del PDF */
+            width: 180px;
+            height: 35px;
             background: repeating-linear-gradient(
                 90deg,
                 var(--cis-blue),
@@ -94,62 +89,64 @@
 <body>
 
     <div class="controles">
-        <input type="text" id="tema" placeholder="Tema del examen..." style="padding: 8px; width: 250px;">
-        <button onclick="pedirIA()" style="padding: 8px 15px; cursor: pointer; background: #0056b3; color: white; border: none;">Generar Examen</button>
-        <button onclick="window.print()" style="padding: 8px 15px; cursor: pointer;">Imprimir a PDF</button>
+        <input type="text" id="tema" placeholder="Tema del examen..." style="padding: 8px; width: 300px;">
+        <button onclick="pedirIA()" style="padding: 8px 15px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 4px;">Generar Examen</button>
+        <button onclick="window.print()" style="padding: 8px 15px; cursor: pointer; border-radius: 4px;">Imprimir a PDF</button>
     </div>
 
     <div class="hoja-a4" id="documento">
-        <!-- Encabezado -->
         <div class="header">
+            <!-- Logos oficiales de respaldo -->
             <img src="https://upload.wikimedia.org/wikipedia/commons/f/f3/Logo_UCV_2021.png" class="logo-ucv" alt="UCV">
-            <img src="https://cis.ucv.edu.pe/img/logo_cis.png" class="logo-cis" alt="CIS">
+            <img src="https://cis.ucv.edu.pe/img/logo_cis.png" class="logo-cis" alt="CIS" onerror="this.src='https://i.ibb.co/pPHR8XF/logo-cis.png'">
         </div>
 
         <div id="contenido-dinamico">
-            <!-- Aquí la IA meterá los datos -->
-            <div class="titulo-examen">EXAMEN MODELO DE COMPUTACIÓN III</div>
+            <div class="titulo-examen">EXAMEN PA1 DEL CURSO COMPUTACIÓN III</div>
             <div class="seccion-datos">
                 <p><span class="negrita">TEMA:</span> <span id="txt-tema">...</span></p>
-                <p><span class="negrita">OBJETIVO:</span> Generar un presupuesto detallado.</p>
+                <p><span class="negrita">OBJETIVO:</span> Crear el presupuesto y análisis de precios unitarios.</p>
                 <hr>
-                <p>DATOS DEL PROYECTO:</p>
-                <ul>
-                    <li>PRESUPUESTO: GENERADO POR IA</li>
-                    <li>FECHA: 2025</li>
-                </ul>
-            </div>
-            
-            <div id="area-preguntas">
-                <!-- Tablas generadas aquí -->
+                <div id="area-preguntas">
+                    <p style="text-align:center; color: #999;">El contenido del examen aparecerá aquí.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Pie de página decorativo -->
         <div class="footer-decoracion"></div>
     </div>
 
     <script>
         async function pedirIA() {
-    const tema = document.getElementById('tema').value;
-    const area = document.getElementById('area-preguntas');
-    area.innerHTML = "Generando estructura profesional...";
+            const temaInput = document.getElementById('tema').value;
+            const area = document.getElementById('area-preguntas');
+            const txtTema = document.getElementById('txt-tema');
 
-    try {
-        const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ tema: tema })
-        });
+            if (!temaInput) return alert("Por favor ingresa un tema");
 
-        const data = await response.json();
-        area.innerHTML = data.html;
-        document.getElementById('txt-tema').innerText = tema.toUpperCase();
-    } catch (error) {
-        area.innerHTML = "Error al conectar con la IA.";
-        console.error(error);
-    }
-}
+            area.innerHTML = "<p style='text-align:center;'>Generando estructura profesional en S10...<br>Esto puede tardar 20 segundos.</p>";
+            
+            try {
+                const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ tema: temaInput })
+                });
+
+                const data = await response.json();
+                
+                // LIMPIEZA DE "UNDEFINED" Y MARKDOWN
+                let contenidoFinal = data.html || "Error: No se recibió contenido.";
+                // Quitar marcas de código si la IA las pone
+                contenidoFinal = contenidoFinal.replace(/```html/g, "").replace(/```/g, "");
+                
+                area.innerHTML = contenidoFinal;
+                txtTema.innerText = temaInput.toUpperCase();
+            } catch (error) {
+                area.innerHTML = "<p style='color:red;'>Error al conectar con el servidor. Inténtalo de nuevo.</p>";
+                console.error(error);
+            }
+        }
     </script>
 </body>
 </html>
