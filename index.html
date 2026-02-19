@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Exámenes UCV</title>
     <style>
-        /* CONFIGURACIÓN GENERAL */
+        /* CONFIGURACIÓN GENERAL PARA LA WEB */
         body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; }
         
-        /* BARRA DE CONTROLES (NO SE IMPRIME) */
         .controles { 
             background: #1a2a3a; 
             padding: 20px; 
@@ -24,7 +23,6 @@
         .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         
-        /* HOJA A4 PROFESIONAL */
         .hoja { 
             width: 210mm; 
             min-height: 297mm; 
@@ -36,7 +34,6 @@
             box-sizing: border-box; 
         }
 
-        /* ENCABEZADO UCV / CIS */
         .header { 
             display: flex; 
             justify-content: space-between; 
@@ -45,36 +42,24 @@
             padding-bottom: 10px; 
             margin-bottom: 20px; 
         }
-        /* TAMAÑO CONTROLADO PARA LOS LOGOS */
         .logo-ucv-img { height: 60px; width: auto; }
         .logo-cis-img { height: 50px; width: auto; }
         
-        /* TABLAS TÉCNICAS (ESTILO S10) */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; page-break-inside: auto; }
-        tr { page-break-inside: avoid; page-break-after: auto; } /* Evita que una fila se parta en dos páginas */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
         th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
         th { background-color: #eeeeee; font-weight: bold; text-align: center; }
 
-        /* PIE DE PÁGINA DECORATIVO */
         .footer-bar { 
-            position: absolute; 
-            bottom: 0; 
-            right: 0; 
-            width: 250px; 
-            height: 40px; 
+            position: absolute; bottom: 0; right: 0; width: 250px; height: 40px; 
             background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
         }
 
-        /* AJUSTES DE IMPRESIÓN PDF */
         @media print { 
-            @page { 
-                size: A4; 
-                margin: 20mm 15mm 20mm 15mm; /* Márgenes reales de impresora para que no pegue arriba */
-            }
+            @page { size: A4; margin: 20mm 15mm; }
             .controles { display: none !important; } 
             body { background: none; } 
             .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
-            .footer-bar { position: fixed; bottom: 0; right: 0; } /* El pie sale en todas las hojas si es posible */
+            .footer-bar { position: fixed; bottom: 0; right: 0; }
         }
     </style>
 </head>
@@ -88,13 +73,11 @@
     </div>
 
     <div class="hoja" id="area-impresion">
-        <div class="header">
-            <!-- Logo UCV -->
+        <!-- Contenedor del encabezado -->
+        <div class="header" id="header-web">
             <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
-    
-            <!-- Logo CIS (Usamos %20 para representar los espacios del nombre) -->
             <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
-         </div>
+        </div>
        
         <h3 style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN PA1: SOFTWARE S10</h3>
         <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
@@ -126,80 +109,79 @@
             }
         }
 
-        // FUNCIÓN MÁGICA PARA EXPORTAR A WORD - IMÁGENES PEQUEÑAS Y FUENTE CORREGIDA
-async function exportarWord() {
-    const ahora = new Date();
-    const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
-    const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
-    
-    // 1. Clonamos el contenido para no afectar la vista de la web
-    const areaClone = document.getElementById('area-impresion').cloneNode(true);
-    const imagenes = areaClone.getElementsByTagName('img');
-    
-    for (let img of imagenes) {
-        // Convertir a link de internet para que Word lo vea
-        const urlAbsoluta = new URL(img.getAttribute('src'), window.location.href).href;
-        img.setAttribute('src', urlAbsoluta);
+        async function exportarWord() {
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
+            const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
+            
+            // Clonamos el contenido
+            const areaClone = document.getElementById('area-impresion').cloneNode(true);
+            
+            // 1. REEMPLAZAR EL HEADER (FLEX) POR UNA TABLA (WORD COMPATIBLE)
+            const headerOriginal = areaClone.querySelector('#header-web');
+            const imgUCV = headerOriginal.querySelector('.logo-ucv-img');
+            const imgCIS = headerOriginal.querySelector('.logo-cis-img');
 
-        // FORZAR TAMAÑO PEQUEÑO DIRECTAMENTE (Lo que Word sí obedece)
-        img.style.width = '1.8cm'; 
-        img.style.height = 'auto';
-        img.style.display = 'block';
-    }
+            // Convertir rutas a absolutas para Word
+            const urlUCV = new URL(imgUCV.getAttribute('src'), window.location.href).href;
+            const urlCIS = new URL(imgCIS.getAttribute('src'), window.location.href).href;
 
-    const contenidoHTML = areaClone.innerHTML;
+            // Creamos una tabla que Word sí entiende para poner logos a los lados
+            const tableHeader = `
+                <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:20px;">
+                    <tr>
+                        <td style="border:none; text-align:left; vertical-align:middle;">
+                            <img src="${urlUCV}" width="120" height="auto">
+                        </td>
+                        <td style="border:none; text-align:right; vertical-align:middle;">
+                            <img src="${urlCIS}" width="100" height="auto">
+                        </td>
+                    </tr>
+                </table>
+            `;
+            headerOriginal.outerHTML = tableHeader;
 
-    // 2. Estilos para Word (Calibri Light en todo)
-    const estilosWord = `
-        <style>
-            @page { size: 21cm 29.7cm; margin: 2cm; }
-            * { 
-                font-family: 'Calibri Light', sans-serif !important; 
+            // Arreglar imágenes que queden en el resultado (si las hay)
+            const restImgs = areaClone.getElementsByTagName('img');
+            for (let img of restImgs) {
+                const abs = new URL(img.getAttribute('src'), window.location.href).href;
+                img.setAttribute('src', abs);
+                img.setAttribute('width', '60'); // Forzar tamaño pequeño
             }
-            body, p, div, span, h1, h2, h3, h4, li, td, th {
-                font-family: 'Calibri Light', sans-serif !important;
-                font-size: 11pt;
-            }
-            table { 
-                border-collapse: collapse; 
-                width: 100%; 
-            }
-            td, th { 
-                border: 1px solid #000000; 
-                padding: 4px; 
-            }
-            .header {
-                display: flex;
-                width: 100%;
-                margin-bottom: 20px;
-            }
-        </style>
-    `;
 
-    // 3. Empaquetado final con formato Microsoft Word
-    const documentoCompleto = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head>
-            <meta charset='utf-8'>
-            ${estilosWord}
-        </head>
-        <body style="font-family:'Calibri Light', sans-serif;">
-            ${contenidoHTML}
-        </body>
-        </html>`;
+            const contenidoHTML = areaClone.innerHTML;
 
-    const blob = new Blob(['\ufeff', documentoCompleto], {
-        type: 'application/msword'
-    });
-    
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+            // 2. ESTILOS FORZADOS PARA WORD
+            const estilosWord = `
+                <style>
+                    @page { size: A4; margin: 2cm; }
+                    body, p, div, span, h1, h2, h3, h4, li, td, th {
+                        font-family: 'Calibri Light', sans-serif !important;
+                        font-size: 11pt;
+                    }
+                    table { border-collapse: collapse; width: 100%; }
+                    td, th { border: 1px solid #000000; padding: 4px; }
+                </style>
+            `;
+
+            // 3. EMPAQUETADO FINAL
+            const documentoCompleto = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'>${estilosWord}</head>
+                <body style="font-family:'Calibri Light', sans-serif;">
+                    ${contenidoHTML}
+                </body>
+                </html>`;
+
+            const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
