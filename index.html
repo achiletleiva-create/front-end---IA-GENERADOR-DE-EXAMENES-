@@ -84,7 +84,7 @@
         <input type="text" id="tema" placeholder="Tema del examen...">
         <button class="btn-gen" onclick="pedirIA()">Generar</button>
         <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
-        <button class="btn-word" onclick="exportarWord()">Bajar Word (.doc)</button>
+        <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
     </div>
 
     <div class="hoja" id="area-impresion">
@@ -129,7 +129,9 @@
         // FUNCIÓN MÁGICA PARA EXPORTAR A WORD
         function exportarWord() {
             const contenido = document.getElementById('area-impresion').innerHTML;
-            const blob = new Blob(['\ufeff', contenido], {
+            // Estilos básicos para que Word entienda las tablas
+            const estilosWord = "<style>table{border-collapse:collapse;width:100%;} td,th{border:1px solid black;padding:5px;}</style>";
+            const blob = new Blob(['\ufeff', estilosWord + contenido], {
                 type: 'application/msword'
             });
             
@@ -137,7 +139,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'Examen_UCV.doc'; // Nombre del archivo
+            link.download = 'Examen_PA1 GRUPO.doc'; // Nombre del archivo
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
