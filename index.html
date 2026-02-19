@@ -122,17 +122,19 @@
             const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
             const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
 
-            // 2. RECONSTRUIR EL ENCABEZADO CON TABLA INVISIBLE Y TAMAÑO FIJO DE 1.5cm
+            // 2. RECONSTRUIR ENCABEZADO CON LOGOS MÁS GRANDES
             const headerOriginal = areaClone.querySelector('.header');
             if(headerOriginal) {
                 headerOriginal.innerHTML = `
                     <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
                         <tr>
                             <td align="left" valign="middle" style="border:none; padding-bottom:10px;">
-                                <img src="${urlUCV}" width="57" height="57" style="width:1.5cm; height:1.5cm;">
+                                <!-- Logo UCV: Ancho aumentado a 3.2cm -->
+                                <img src="${urlUCV}" width="120" style="width:3.2cm; height:auto;">
                             </td>
                             <td align="right" valign="middle" style="border:none; padding-bottom:10px;">
-                                <img src="${urlCIS}" width="57" height="57" style="width:1.5cm; height:1.5cm;">
+                                <!-- Logo CIS: Ancho aumentado a 2.8cm -->
+                                <img src="${urlCIS}" width="105" style="width:2.8cm; height:auto;">
                             </td>
                         </tr>
                     </table>`;
@@ -140,12 +142,12 @@
 
             const contenidoHTML = areaClone.innerHTML;
 
-            // 3. ESTILOS DE FUENTE CALIBRI LIGHT (Para todo el documento)
+            // 3. ESTILOS DE FUENTE CALIBRI LIGHT
             const estilosWord = `
                 <style>
                     @page { size: A4; margin: 2cm; }
                     * { font-family: 'Calibri Light', sans-serif !important; }
-                    body, p, div, span, h1, h2, h3, h4, li, td, th {
+                    body, p, div, span, h1, h2, h3, h4, li, table, td, th {
                         font-family: 'Calibri Light', sans-serif !important;
                         font-size: 11pt;
                     }
