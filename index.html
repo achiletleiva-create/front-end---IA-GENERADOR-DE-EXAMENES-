@@ -126,30 +126,39 @@
             }
         }
 
-        // FUNCIÓN MÁGICA PARA EXPORTAR A WORD CORREGIDA
+        // FUNCIÓN MÁGICA PARA EXPORTAR A WORD - IMÁGENES PEQUEÑAS Y FUENTE CORREGIDA
 async function exportarWord() {
     const ahora = new Date();
     const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
     const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
     
-    // 1. Clonamos el contenido para procesar las imágenes
+    // 1. Clonamos el contenido para no afectar la vista de la web
     const areaClone = document.getElementById('area-impresion').cloneNode(true);
     const imagenes = areaClone.getElementsByTagName('img');
     
     for (let img of imagenes) {
-        // Convertir rutas a URL absoluta para que Word las descargue de internet
+        // Convertir a link de internet para que Word lo vea
         const urlAbsoluta = new URL(img.getAttribute('src'), window.location.href).href;
         img.setAttribute('src', urlAbsoluta);
+
+        // FORZAR TAMAÑO PEQUEÑO DIRECTAMENTE (Lo que Word sí obedece)
+        img.style.width = '1.8cm'; 
+        img.style.height = 'auto';
+        img.style.display = 'block';
     }
 
     const contenidoHTML = areaClone.innerHTML;
 
-    // 2. Estilos blindados para Word (Tamaño de imágenes y Fuente universal)
+    // 2. Estilos para Word (Calibri Light en todo)
     const estilosWord = `
         <style>
-            /* Forzar fuente en TODO el documento */
-            body, p, span, div, h1, h2, h3, h4, li, table, td, th {
+            @page { size: 21cm 29.7cm; margin: 2cm; }
+            * { 
+                font-family: 'Calibri Light', sans-serif !important; 
+            }
+            body, p, div, span, h1, h2, h3, h4, li, td, th {
                 font-family: 'Calibri Light', sans-serif !important;
+                font-size: 11pt;
             }
             table { 
                 border-collapse: collapse; 
@@ -157,36 +166,25 @@ async function exportarWord() {
             }
             td, th { 
                 border: 1px solid #000000; 
-                padding: 5px; 
-            }
-            /* Tamaño ajustado de los logos para la hoja Word */
-            .logo-ucv-img { 
-                width: 220px; /* Tamaño optimizado */
-                height: auto; 
-            }
-            .logo-cis-img { 
-                width: 180px; /* Tamaño optimizado */
-                height: auto; 
+                padding: 4px; 
             }
             .header {
+                display: flex;
                 width: 100%;
                 margin-bottom: 20px;
             }
         </style>
     `;
 
-    // 3. Empaquetar el HTML con metadatos de Word para forzar Calibri
+    // 3. Empaquetado final con formato Microsoft Word
     const documentoCompleto = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
             <meta charset='utf-8'>
             ${estilosWord}
         </head>
-        <body>
-            <!-- El div siguiente es un refuerzo para que Word no use Times New Roman -->
-            <div style="font-family:'Calibri Light', sans-serif;">
-                ${contenidoHTML}
-            </div>
+        <body style="font-family:'Calibri Light', sans-serif;">
+            ${contenidoHTML}
         </body>
         </html>`;
 
