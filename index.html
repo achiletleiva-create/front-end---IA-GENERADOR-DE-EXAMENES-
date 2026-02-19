@@ -127,26 +127,47 @@
         }
 
         // FUNCIÓN MÁGICA PARA EXPORTAR A WORD
-        function exportarWord() {
-            const ahora = new Date();
-            const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-'); // Formato DD-MM-YYYY
-            const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm'; // Formato HHhMMm
-            const contenido = document.getElementById('area-impresion').innerHTML;
-            // Estilos básicos para que Word entienda las tablas
-            const estilosWord = "<style>table{border-collapse:collapse;width:100%;} td,th{border:1px solid black;padding:5px;}</style>";
-            const blob = new Blob(['\ufeff', estilosWord + contenido], {
-                type: 'application/msword'
-            });
-            
-            // Crear un link de descarga temporal
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`; // Nombre del archivo
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+function exportarWord() {
+    const ahora = new Date();
+    const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-'); // Formato DD-MM-YYYY
+    const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm'; // Formato HHhMMm
+    
+    // 1. Clonamos el contenido para modificar las rutas de imágenes sin afectar la vista web
+    const areaClone = document.getElementById('area-impresion').cloneNode(true);
+    const imagenes = areaClone.getElementsByTagName('img');
+    
+    for (let img of imagenes) {
+        // Esto convierte "logo.png" en "https://achiletleiva-create.github.io/.../logo.png" automáticamente
+        const urlAbsoluta = new URL(img.getAttribute('src'), window.location.href).href;
+        img.setAttribute('src', urlAbsoluta);
+    }
+
+    const contenido = areaClone.innerHTML;
+
+    // 2. Estilos: Agregamos Calibri Light para todo el documento y las tablas
+    const estilosWord = `
+        <style>
+            * { font-family: 'Calibri Light', sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            td, th { border: 1px solid black; padding: 5px; font-family: 'Calibri Light', sans-serif; }
+            .logo-ucv-img { height: 80px; width: auto; }
+            .logo-cis-img { height: 70px; width: auto; }
+        </style>
+    `;
+
+    const blob = new Blob(['\ufeff', estilosWord + contenido], {
+        type: 'application/msword'
+    });
+    
+    // Crear un link de descarga temporal
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`; // Nombre del archivo conservado
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
     </script>
 </body>
 </html>
