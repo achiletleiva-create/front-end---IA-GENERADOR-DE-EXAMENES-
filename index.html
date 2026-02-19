@@ -109,32 +109,32 @@
             }
         }
 
-        async function exportarWord() {
+      async function exportarWord() {
             const ahora = new Date();
             const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
             const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
             
             const areaClone = document.getElementById('area-impresion').cloneNode(true);
             
-            // 1. OBTENER URLS ABSOLUTAS DE LOS LOGOS
+            // 1. OBTENER URLS ABSOLUTAS
             const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
             const imgCISWeb = areaClone.querySelector('.logo-cis-img');
             const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
             const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
 
-            // 2. RECONSTRUIR ENCABEZADO CON LOGOS MÁS GRANDES
+            // 2. RECONSTRUIR ENCABEZADO (Tamaños en píxeles para evitar distorsión)
             const headerOriginal = areaClone.querySelector('.header');
             if(headerOriginal) {
                 headerOriginal.innerHTML = `
                     <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
                         <tr>
-                            <td align="left" valign="middle" style="border:none; padding-bottom:10px;">
-                                <!-- Logo UCV: Ancho aumentado a 3.2cm -->
-                                <img src="${urlUCV}" width="120" style="width:3.2cm; height:auto;">
+                            <td align="left" valign="middle" style="border:none; padding: 10px 0;">
+                                <!-- UCV: Tamaño más grande (180px) -->
+                                <img src="${urlUCV}" width="180" style="width:180px; height:auto; display:block;">
                             </td>
-                            <td align="right" valign="middle" style="border:none; padding-bottom:10px;">
-                                <!-- Logo CIS: Ancho aumentado a 2.8cm -->
-                                <img src="${urlCIS}" width="105" style="width:2.8cm; height:auto;">
+                            <td align="right" valign="middle" style="border:none; padding: 10px 0;">
+                                <!-- CIS: Tamaño más grande (160px) -->
+                                <img src="${urlCIS}" width="160" style="width:160px; height:auto; display:block;">
                             </td>
                         </tr>
                     </table>`;
@@ -142,7 +142,7 @@
 
             const contenidoHTML = areaClone.innerHTML;
 
-            // 3. ESTILOS DE FUENTE CALIBRI LIGHT
+            // 3. ESTILOS DE FUENTE CALIBRI LIGHT (Sin cambios adicionales)
             const estilosWord = `
                 <style>
                     @page { size: A4; margin: 2cm; }
