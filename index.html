@@ -128,6 +128,9 @@
 
         // FUNCIÓN MÁGICA PARA EXPORTAR A WORD
         function exportarWord() {
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-'); // Formato DD-MM-YYYY
+            const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm'; // Formato HHhMMm
             const contenido = document.getElementById('area-impresion').innerHTML;
             // Estilos básicos para que Word entienda las tablas
             const estilosWord = "<style>table{border-collapse:collapse;width:100%;} td,th{border:1px solid black;padding:5px;}</style>";
@@ -139,7 +142,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'Examen_PA1 GRUPO.doc'; // Nombre del archivo
+            link.download = 'Examen_PA1 GRUPO ${fecha}_${hora}.doc'; // Nombre del archivo
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
