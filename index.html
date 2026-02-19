@@ -114,57 +114,45 @@
             const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
             const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
             
-            // Clonamos el contenido
             const areaClone = document.getElementById('area-impresion').cloneNode(true);
             
-            // 1. REEMPLAZAR EL HEADER (FLEX) POR UNA TABLA (WORD COMPATIBLE)
-            const headerOriginal = areaClone.querySelector('#header-web');
-            const imgUCV = headerOriginal.querySelector('.logo-ucv-img');
-            const imgCIS = headerOriginal.querySelector('.logo-cis-img');
+            // 1. OBTENER URLS ABSOLUTAS DE LOS LOGOS
+            const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
+            const imgCISWeb = areaClone.querySelector('.logo-cis-img');
+            const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
+            const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
 
-            // Convertir rutas a absolutas para Word
-            const urlUCV = new URL(imgUCV.getAttribute('src'), window.location.href).href;
-            const urlCIS = new URL(imgCIS.getAttribute('src'), window.location.href).href;
-
-            // Creamos una tabla que Word sí entiende para poner logos a los lados
-            const tableHeader = `
-                <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:20px;">
-                    <tr>
-                        <td style="border:none; text-align:left; vertical-align:middle;">
-                            <img src="${urlUCV}" width="120" height="auto">
-                        </td>
-                        <td style="border:none; text-align:right; vertical-align:middle;">
-                            <img src="${urlCIS}" width="100" height="auto">
-                        </td>
-                    </tr>
-                </table>
-            `;
-            headerOriginal.outerHTML = tableHeader;
-
-            // Arreglar imágenes que queden en el resultado (si las hay)
-            const restImgs = areaClone.getElementsByTagName('img');
-            for (let img of restImgs) {
-                const abs = new URL(img.getAttribute('src'), window.location.href).href;
-                img.setAttribute('src', abs);
-                img.setAttribute('width', '60'); // Forzar tamaño pequeño
+            // 2. RECONSTRUIR EL ENCABEZADO CON TABLA INVISIBLE Y TAMAÑO FIJO DE 1.5cm
+            const headerOriginal = areaClone.querySelector('.header');
+            if(headerOriginal) {
+                headerOriginal.innerHTML = `
+                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
+                        <tr>
+                            <td align="left" valign="middle" style="border:none; padding-bottom:10px;">
+                                <img src="${urlUCV}" width="57" height="57" style="width:1.5cm; height:1.5cm;">
+                            </td>
+                            <td align="right" valign="middle" style="border:none; padding-bottom:10px;">
+                                <img src="${urlCIS}" width="57" height="57" style="width:1.5cm; height:1.5cm;">
+                            </td>
+                        </tr>
+                    </table>`;
             }
 
             const contenidoHTML = areaClone.innerHTML;
 
-            // 2. ESTILOS FORZADOS PARA WORD
+            // 3. ESTILOS DE FUENTE CALIBRI LIGHT (Para todo el documento)
             const estilosWord = `
                 <style>
                     @page { size: A4; margin: 2cm; }
+                    * { font-family: 'Calibri Light', sans-serif !important; }
                     body, p, div, span, h1, h2, h3, h4, li, td, th {
                         font-family: 'Calibri Light', sans-serif !important;
                         font-size: 11pt;
                     }
                     table { border-collapse: collapse; width: 100%; }
                     td, th { border: 1px solid #000000; padding: 4px; }
-                </style>
-            `;
+                </style>`;
 
-            // 3. EMPAQUETADO FINAL
             const documentoCompleto = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head><meta charset='utf-8'>${estilosWord}</head>
