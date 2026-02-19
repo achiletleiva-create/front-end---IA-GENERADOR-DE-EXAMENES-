@@ -126,44 +126,78 @@
             }
         }
 
-        // FUNCIÓN MÁGICA PARA EXPORTAR A WORD
-function exportarWord() {
+        // FUNCIÓN MÁGICA PARA EXPORTAR A WORD CORREGIDA
+async function exportarWord() {
     const ahora = new Date();
-    const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-'); // Formato DD-MM-YYYY
-    const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm'; // Formato HHhMMm
+    const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
+    const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
     
-    // 1. Clonamos el contenido para modificar las rutas de imágenes sin afectar la vista web
+    // 1. Clonamos el contenido para procesar las imágenes
     const areaClone = document.getElementById('area-impresion').cloneNode(true);
     const imagenes = areaClone.getElementsByTagName('img');
     
     for (let img of imagenes) {
-        // Esto convierte "logo.png" en "https://achiletleiva-create.github.io/.../logo.png" automáticamente
+        // Convertir rutas a URL absoluta para que Word las descargue de internet
         const urlAbsoluta = new URL(img.getAttribute('src'), window.location.href).href;
         img.setAttribute('src', urlAbsoluta);
     }
 
-    const contenido = areaClone.innerHTML;
+    const contenidoHTML = areaClone.innerHTML;
 
-    // 2. Estilos: Agregamos Calibri Light para todo el documento y las tablas
+    // 2. Estilos blindados para Word (Tamaño de imágenes y Fuente universal)
     const estilosWord = `
         <style>
-            * { font-family: 'Calibri Light', sans-serif; }
-            table { border-collapse: collapse; width: 100%; }
-            td, th { border: 1px solid black; padding: 5px; font-family: 'Calibri Light', sans-serif; }
-            .logo-ucv-img { height: 80px; width: auto; }
-            .logo-cis-img { height: 70px; width: auto; }
+            /* Forzar fuente en TODO el documento */
+            body, p, span, div, h1, h2, h3, h4, li, table, td, th {
+                font-family: 'Calibri Light', sans-serif !important;
+            }
+            table { 
+                border-collapse: collapse; 
+                width: 100%; 
+            }
+            td, th { 
+                border: 1px solid #000000; 
+                padding: 5px; 
+            }
+            /* Tamaño ajustado de los logos para la hoja Word */
+            .logo-ucv-img { 
+                width: 220px; /* Tamaño optimizado */
+                height: auto; 
+            }
+            .logo-cis-img { 
+                width: 180px; /* Tamaño optimizado */
+                height: auto; 
+            }
+            .header {
+                width: 100%;
+                margin-bottom: 20px;
+            }
         </style>
     `;
 
-    const blob = new Blob(['\ufeff', estilosWord + contenido], {
+    // 3. Empaquetar el HTML con metadatos de Word para forzar Calibri
+    const documentoCompleto = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            ${estilosWord}
+        </head>
+        <body>
+            <!-- El div siguiente es un refuerzo para que Word no use Times New Roman -->
+            <div style="font-family:'Calibri Light', sans-serif;">
+                ${contenidoHTML}
+            </div>
+        </body>
+        </html>`;
+
+    const blob = new Blob(['\ufeff', documentoCompleto], {
         type: 'application/msword'
     });
     
-    // Crear un link de descarga temporal
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`; // Nombre del archivo conservado
+    link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
