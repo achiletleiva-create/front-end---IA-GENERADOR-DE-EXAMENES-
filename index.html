@@ -254,7 +254,6 @@
 
         const contenidoHTML = areaClone.innerHTML;
         const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
-        
         const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
 
         const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
