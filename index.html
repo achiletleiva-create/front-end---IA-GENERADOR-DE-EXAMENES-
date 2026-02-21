@@ -202,7 +202,7 @@
                 body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
             });
             const data = await res.json();
-            caja.innerHTML = data.contenido.replace(/```html|```/g, "");
+            caja.innerHTML = data.contenido;
             document.getElementById('txt-tema').innerText = tema.toUpperCase();
         } catch (e) {
             caja.innerHTML = "Error de conexión.";
@@ -217,8 +217,8 @@
             body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
         });
         const data = await res.json();
-        document.getElementById('q-mult').value = data.multiple;
-        document.getElementById('q-match').value = data.match;
+        document.getElementById('q-mult').value = data.multiple || "Error al generar";
+        document.getElementById('q-match').value = data.match || "Error al generar";
     }
 
     function copyT(id) {
