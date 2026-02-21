@@ -135,12 +135,16 @@
         let nombreExamenFull = '';
 
         function seleccionarExamen(tipo, nombre) {
-            tipoSeleccionado = tipo;
-            nombreExamenFull = nombre;
-            document.getElementById('titulo-examen-hoja').innerText = nombre + ": SOFTWARE S10";
-            document.getElementById('slide-1').style.display = 'none';
-            document.getElementById('slide-2').style.display = 'block';
-        }
+    tipoSeleccionado = tipo;
+    nombreExamenFull = nombre;
+    
+    // Si es PA2 o FINAL, el subtítulo es MS PROJECT, de lo contrario es SOFTWARE S10
+    let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
+    
+    document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
+    document.getElementById('slide-1').style.display = 'none';
+    document.getElementById('slide-2').style.display = 'block';
+}
 
         function volver() {
             document.getElementById('slide-1').style.display = 'flex';
