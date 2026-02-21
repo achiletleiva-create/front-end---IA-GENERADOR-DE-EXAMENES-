@@ -1,270 +1,117 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Exámenes UCV</title>
-    <style>
-        /* CONFIGURACIÓN GENERAL */
-        body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; overflow-x: hidden; }
-        
-        /* SLIDE 1: PORTADA */
-        #slide-1 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1a2a3a 0%, #0056b3 100%);
-            color: white;
-            text-align: center;
-        }
-        .welcome-title { font-size: 2.5rem; margin-bottom: 10px; }
-        .author { font-size: 1.2rem; color: #adb5bd; margin-bottom: 40px; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; }
-        .btn-menu { 
-            padding: 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 8px; 
-            cursor: pointer; background: white; color: #1a2a3a; transition: 0.3s;
-        }
-        .btn-menu:hover { background: #e0e0e0; transform: scale(1.05); }
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
 
-        /* SLIDE 2 Y 3: EDITOR */
-        #slide-2, #slide-3 { display: none; }
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-        .controles { 
-            background: #1a2a3a; 
-            padding: 20px; 
-            text-align: center; 
-            color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .controles input { padding: 10px; width: 300px; border-radius: 4px; border: none; font-size: 14px; }
-        .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .btn-quiz { padding: 10px 15px; background: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-volver { padding: 10px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 15px; }
-        
-        .hoja { 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 20mm; 
-            margin: 20px auto; 
-            background: white; 
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-            position: relative; 
-            box-sizing: border-box; 
-        }
+const API_KEY = process.env.GEMINI_API_KEY;
 
-        /* SLIDE 3: CUESTIONARIO */
-        .quiz-container { max-width: 1000px; margin: 20px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
-        .quiz-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .quiz-box h4 { margin-top: 0; color: #1a2a3a; border-bottom: 2px solid #ffc107; padding-bottom: 5px; }
-        textarea { width: 100%; height: 500px; font-family: monospace; padding: 10px; resize: none; border: 1px solid #ddd; }
-        .btn-copy { margin-top: 10px; width: 100%; padding: 10px; background: #1a2a3a; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+// --- SLIDE 2: GENERAR EXAMEN (TU CÓDIGO ORIGINAL SIN CAMBIOS) ---
+app.post('/generar-examen', async (req, res) => {
+    const { tema, tipo } = req.body;
+    console.log(`Generando ${tipo} para tema: ${tema}`);
 
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 2px solid #000; 
-            padding-bottom: 10px; 
-            margin-bottom: 20px; 
-        }
-        .logo-ucv-img { height: 60px; width: auto; }
-        .logo-cis-img { height: 50px; width: auto; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
-        th { background-color: #eeeeee; font-weight: bold; text-align: center; }
+    const PROMPTS = {
+        pa1: `[COMPUTACIÓN III - S10] Genera un examen práctico de Software S10 para el Producto Académico 1. CONTEXTO: Un proyecto de edificación residencial de mediana complejidad en Trujillo. REQUISITOS: 1. Datos del proyecto. 2. Tabla de 10 Recursos con precios reales. 3. Planilla de metrados (6 partidas). 4. Datos para APU.`,
+        parcial: `[COMPUTACIÓN III - S10 - EXAMEN SECUENCIAL] Tarea: Generar un EXAMEN PARCIAL de S10 basado en el tema "${tema}". El examen debe ser secuencial: el resultado del Ejercicio 1 se usa en el Ejercicio 2. ESTRUCTURA OBLIGATORIA DEL EXAMEN: 1. DATOS GENERALES DEL PRESUPUESTO (Formato S10): Generar una ficha técnica con: Crear Grupo Nuevo, Descripción del Presupuesto, Cliente, Ubicación Geográfica, Fecha, Plazo y Jornada (8h). 2. EJERCICIO 1: DETERMINACIÓN DEL COSTO DIRECTO. - Presenta una tabla con 8 partidas técnicas reales (Incluye Títulos y Subtítulos de especialidades). - Columnas OBLIGATORIAS: [Ítem], [Descripción de Partida], [Unidad], [Metrado], [Costo Unitario S/.], [Parcial S/.]. - IMPORTANTE: La columna "Parcial S/." debe estar vacía para que el alumno la calcule. - El alumno debe hallar la sumatoria total que representa el COSTO DIRECTO (C.D.). 3. EJERCICIO 2: DISEÑO DEL PIE DE PRESUPUESTO (Continuación). - Instrucción: "Con el Costo Directo obtenido en el Ejercicio 1, desarrolle el Pie de Presupuesto según los siguientes parámetros". - Provee datos específicos: % de Gastos Generales (10-15%), % de Utilidad (5-10%) e IGV (18%). - NO incluyas tablas de recursos aquí; enfócate en la estructura de costos indirectos. 4. CUESTIONARIO DE EVALUACIÓN: Generar lista numerada: 1. Calcular C.D. Total. 2. Determinar GG, Utilidad y Subtotal. 3. Calcular IGV y Total de Obra. 4. Pregunta teórica sobre configuración de Pie de Presupuesto en S10. REGLA DE CALIDAD: Los costos y metrados deben tener coherencia técnica con la ingeniería peruana.`,
+        pa2: `[NIVEL: PLANIFICADOR DE PROYECTOS / MS PROJECT EXPERT] Tarea: Generar un examen PA2 sobre MS PROJECT enfocado en MÉTODO PERT y ESTRUCTURA JERÁRQUICA. REQUISITOS: 1. Calendario y Feriado. 2. EDT con FASES y SUBTAREAS. 3. MÉTODO PERT usando campos de Duración1, 2 y 3. 4. Cálculo de Ruta Crítica. 5. Preguntas de análisis final.`,
+        final: `[NIVEL: DIRECTOR DE PROYECTOS / MS PROJECT EXPERT - EXAMEN INTEGRAL SECUENCIAL] Tarea: Generar un EXAMEN FINAL de MS PROJECT basado en el tema "${tema}". El examen debe ser una secuencia técnica: el cronograma del Ejercicio 1 es la base para el costo del Ejercicio 2. ESTRUCTURA OBLIGATORIA DEL EXAMEN: 1. CONFIGURACIÓN ENTORNO (Ficha Técnica): - Nombre del Proyecto, Fecha de Inicio (Lunes próximo), Calendario laboral (8h/día) y un día feriado. 2. EJERCICIO 1: PROGRAMACIÓN, GANTT Y RUTA CRÍTICA. - Presenta una tabla con la EDT Jerárquica (Fases y Subtareas, mín. 12 líneas). - Columnas: [EDT], [Nombre de la Tarea], [Predecesoras], [Duración]. - Incluir al menos 3 Hitos (Duración 0). - El alumno debe ingresar los datos para hallar la FECHA FINAL y la RUTA CRÍTICA. 3. EJERCICIO 2: GESTIÓN DE RECURSOS Y COSTO DEL PROYECTO (Continuación). - Instrucción: "Continuando con la programación anterior, asigne los siguientes recursos para determinar el costo total". - Presenta una TABLA DE RECURSOS: [Nombre del Recurso], [Tipo (Trabajo/Material)], [Unidad], [Tasa Estándar S/.]. - Indica qué recursos se asignan a qué tareas del Ejercicio 1 de forma clara. 4. CUESTIONARIO DE EVALUACIÓN FINAL: Generar lista numerada: 1. Indicar la duración total del proyecto en días útiles y la fecha de finalización. 2. Identificar las tareas que conforman la Ruta Crítica. 3. Calcular el Costo Total del Proyecto (Suma de recursos asignados). 4. Pregunta teórica: "Explique cómo se visualiza el Informe de Costos y el Flujo de Caja en MS Project". REGLA DE CALIDAD: La lógica de predecesoras debe ser coherente para evitar errores de programación en el software.`
+    };
 
-        .footer-bar { 
-            position: absolute; bottom: 0; right: 0; width: 250px; height: 40px; 
-            background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
-        }
+    const instruccionTipo = PROMPTS[tipo] || PROMPTS.pa1;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-        @media print { 
-            @page { size: A4; margin: 20mm 15mm; }
-            #slide-1, #slide-3, .controles { display: none !important; } 
-            #slide-2 { display: block; }
-            body { background: none; } 
-            .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
-            .footer-bar { position: fixed; bottom: 0; right: 0; }
-        }
-    </style>
-</head>
-<body>
+    const rolIngeniero = (tipo === 'pa2' || tipo === 'final') 
+        ? "Ingeniero experto en Planificación y Control de Proyectos con MS PROJECT" 
+        : "Ingeniero experto en Costos y Presupuestos con software S10";
 
-    <!-- SLIDE 1: PORTADA -->
-    <div id="slide-1">
-        <h1 class="welcome-title">BIENVENIDO AL CREADOR DE EXAMENES</h1>
-        <p class="author">BY ING. ANTHONY CHILET</p>
-        <h3 style="margin-bottom: 20px;">ELIGE QUE EXAMEN CREAR:</h3>
-        <div class="menu-grid">
-            <button class="btn-menu" onclick="seleccionarExamen('pa1', 'EXAMEN PRODUCTO ACADÉMICO 01 (PA1)')">PRODUCTO ACADÉMICO 01 (PA1)</button>
-            <button class="btn-menu" onclick="seleccionarExamen('parcial', 'EXAMEN PARCIAL')">EXAMEN PARCIAL</button>
-            <button class="btn-menu" onclick="seleccionarExamen('pa2', 'EXAMEN PRODUCTO ACADÉMICO 02 (PA2)')">PRODUCTO ACADÉMICO 02 (PA2)</button>
-            <button class="btn-menu" onclick="seleccionarExamen('final', 'EXAMEN FINAL')">EXAMEN FINAL</button>
-        </div>
-    </div>
+    const payload = {
+        contents: [{
+            parts: [{
+                text: `Actúa como: ${rolIngeniero}. Tarea: ${instruccionTipo}.
+                REGLAS CRÍTICAS DE SALIDA: 1. NO incluyas saludos ni presentaciones. 2. NO incluyas comentarios iniciales ni finales. 3. EMPIEZA DIRECTAMENTE con el contenido del examen en HTML. 4. VE DIRECTO AL GRANO. REGLAS DE FORMATO HTML: - Usa etiquetas <h3> para títulos y <table> con border="1". - Tablas de recursos con columnas fijas: [Categoría], [Descripción], [Unidad], [Precio S/.]. - No uses bloques de código markdown, responde con el HTML puro.`
+            }]
+        }]
+    };
 
-    <!-- SLIDE 2: INTERFAZ DE EXAMEN -->
-    <div id="slide-2">
-        <div class="controles">
-            <button class="btn-volver" onclick="volver()">← Volver</button>
-            <input type="text" id="tema" placeholder="Tema del examen...">
-            <button class="btn-gen" onclick="pedirIA()">Generar</button>
-            <button class="btn-quiz" onclick="irAQuiz()">Generar Quiz Blackboard</button>
-            <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
-            <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
-        </div>
-
-        <div class="hoja" id="area-impresion">
-            <div class="header" id="header-web">
-                <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
-                <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
-            </div>
-           
-            <h3 id="titulo-examen-hoja" style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN: SOFTWARE S10</h3>
-            <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
-            
-            <div id="resultado">
-                <p style="text-align:center; color:#888; margin-top:50px;">El examen se mostrará aquí...</p>
-            </div>
-
-            <div class="footer-bar"></div>
-        </div>
-    </div>
-
-    <!-- SLIDE 3: CUESTIONARIO BLACKBOARD -->
-    <div id="slide-3">
-        <div class="controles">
-            <button class="btn-volver" onclick="volverAlEditor()">← Volver al Examen</button>
-            <h2 style="display:inline; margin-left:20px; color:white;">Generador de Quiz para Blackboard</h2>
-        </div>
-        <div class="quiz-container">
-            <div class="quiz-box">
-                <h4>Opción Múltiple (Formato Blackboard)</h4>
-                <textarea id="q-mult" readonly placeholder="Cargando preguntas de opción múltiple..."></textarea>
-                <button class="btn-copy" onclick="copyT('q-mult')">Copiar Opción Múltiple</button>
-            </div>
-            <div class="quiz-box">
-                <h4>Correspondencia / Match (Formato Blackboard)</h4>
-                <textarea id="q-match" readonly placeholder="Cargando preguntas de correspondencia..."></textarea>
-                <button class="btn-copy" onclick="copyT('q-match')">Copiar Correspondencia</button>
-            </div>
-        </div>
-    </div>
-
-<script>
-    let tipoSeleccionado = '';
-    let nombreExamenFull = '';
-
-    function seleccionarExamen(tipo, nombre) {
-        tipoSeleccionado = tipo;
-        nombreExamenFull = nombre;
-        let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
-        document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
-        document.getElementById('slide-1').style.display = 'none';
-        document.getElementById('slide-2').style.display = 'block';
-    }
-
-    function volver() {
-        document.getElementById('slide-1').style.display = 'flex';
-        document.getElementById('slide-2').style.display = 'none';
-    }
-
-    function irAQuiz() {
-        const tema = document.getElementById('tema').value;
-        if(!tema) return alert("Primero genera un examen en el Slide 2");
-        document.getElementById('slide-2').style.display = 'none';
-        document.getElementById('slide-3').style.display = 'block';
-        pedirQuiz();
-    }
-
-    function volverAlEditor() {
-        document.getElementById('slide-3').style.display = 'none';
-        document.getElementById('slide-2').style.display = 'block';
-    }
-
-    async function pedirIA() {
-        const tema = document.getElementById('tema').value;
-        const caja = document.getElementById('resultado');
-        if(!tema) return alert("Escribe un tema");
-        caja.innerHTML = "Generando estructura profesional... espera unos segundos.";
-        try {
-            const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
-            });
-            const data = await res.json();
-            caja.innerHTML = data.contenido;
-            document.getElementById('txt-tema').innerText = tema.toUpperCase();
-        } catch (e) {
-            caja.innerHTML = "Error de conexión.";
-        }
-    }
-
-    async function pedirQuiz() {
-        const tema = document.getElementById('tema').value;
-        const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+    try {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        document.getElementById('q-mult').value = data.multiple || "Error al generar";
-        document.getElementById('q-match').value = data.match || "Error al generar";
-    }
-
-    function copyT(id) {
-        const a = document.getElementById(id);
-        a.select();
-        document.execCommand('copy');
-        alert("Copiado al portapapeles.");
-    }
-
-    async function exportarWord() {
-        const ahora = new Date();
-        const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
-        const areaClone = document.getElementById('area-impresion').cloneNode(true);
-        const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
-        const imgCISWeb = areaClone.querySelector('.logo-cis-img');
-        const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
-        const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
-
-        const headerOriginal = areaClone.querySelector('.header');
-        if(headerOriginal) {
-            headerOriginal.innerHTML = `
-                <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
-                    <tr>
-                        <td align="left" valign="middle" style="border:none; padding: 10px 0;">
-                            <img src="${urlUCV}" width="180" height="90" style="width:180px; height:90px; display:block;">
-                        </td>
-                        <td align="right" valign="middle" style="border:none; padding: 10px 0;">
-                            <img src="${urlCIS}" width="160" height="80" style="width:160px; height:80px; display:block;">
-                        </td>
-                    </tr>
-                </table>`;
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+            const textoIA = data.candidates[0].content.parts[0].text;
+            res.json({ contenido: textoIA.replace(/```html|```/g, "") });
+        } else {
+            const url25 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const res25 = await fetch(url25, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            const data25 = await res25.json();
+            const texto25 = data25.candidates[0].content.parts[0].text;
+            res.json({ contenido: texto25.replace(/```html|```/g, "") });
         }
-
-        const contenidoHTML = areaClone.innerHTML;
-        const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
-        const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
-
-        const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${nombreExamenFull} - ${fecha}.doc`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    } catch (error) {
+        res.status(500).json({ contenido: "Error IA: " + error.message });
     }
-</script>
-</body>
-</html>
+});
+
+// --- SLIDE 3: GENERAR QUIZ (REDISEÑADO PARA COMPATIBILIDAD TOTAL) ---
+app.post('/generar-quiz', async (req, res) => {
+    const { tema, tipo } = req.body;
+    const software = (tipo === 'pa2' || tipo === 'final') ? "MS PROJECT" : "S10";
+
+    const promptQuiz = `Actúa como Ingeniero experto en ${software}. Genera 40 preguntas técnicas (20 opción múltiple y 20 match) sobre "${tema}" para copiar y pegar en un generador de Blackboard.
+    
+    ESTRUCTURA OBLIGATORIA:
+    ---BLOQUE_MULTIPLE---
+    (Usa este formato para 20 preguntas):
+    1. Pregunta?
+    a) Opción
+    *b) Respuesta correcta con asterisco
+    c) Opción
+    
+    ---BLOQUE_MATCH---
+    (Usa este formato para 20 preguntas):
+    match 1. Relacione los conceptos técnicos:
+    Término / Definición
+    Término / Definición
+    
+    REGLA: Cero saludos, cero bloques de código markdown. Solo el texto plano.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: promptQuiz }] }]
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0]) {
+            const textoIA = data.candidates[0].content.parts[0].text.replace(/```/g, "");
+
+            // Separación manual de bloques para evitar errores de JSON
+            const partes = textoIA.split('---BLOQUE_MATCH---');
+            const multi = partes[0].replace('---BLOQUE_MULTIPLE---', '').trim();
+            const match = partes[1] ? partes[1].trim() : "No se generó el bloque de correspondencia.";
+
+            res.json({
+                multiple: multi,
+                match: match
+            });
+        } else {
+            res.status(500).json({ error: "La IA no respondió." });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log("Servidor Activo en puerto " + PORT));
