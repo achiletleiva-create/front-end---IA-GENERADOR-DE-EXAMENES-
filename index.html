@@ -5,9 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Exámenes UCV</title>
     <style>
-        /* CONFIGURACIÓN GENERAL PARA LA WEB */
-        body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; }
+        /* CONFIGURACIÓN GENERAL */
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; overflow-x: hidden; }
         
+        /* SLIDE 1: PORTADA */
+        #slide-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a2a3a 0%, #0056b3 100%);
+            color: white;
+            text-align: center;
+        }
+        .welcome-title { font-size: 2.5rem; margin-bottom: 10px; }
+        .author { font-size: 1.2rem; color: #adb5bd; margin-bottom: 40px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; }
+        .btn-menu { 
+            padding: 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 8px; 
+            cursor: pointer; background: white; color: #1a2a3a; transition: 0.3s;
+        }
+        .btn-menu:hover { background: #e0e0e0; transform: scale(1.05); }
+
+        /* SLIDE 2: EDITOR (OCULTO INICIALMENTE) */
+        #slide-2 { display: none; }
+
         .controles { 
             background: #1a2a3a; 
             padding: 20px; 
@@ -22,6 +45,7 @@
         .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
         .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
+        .btn-volver { padding: 10px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 15px; }
         
         .hoja { 
             width: 210mm; 
@@ -56,7 +80,8 @@
 
         @media print { 
             @page { size: A4; margin: 20mm 15mm; }
-            .controles { display: none !important; } 
+            #slide-1, .controles { display: none !important; } 
+            #slide-2 { display: block; }
             body { background: none; } 
             .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
             .footer-bar { position: fixed; bottom: 0; right: 0; }
@@ -65,31 +90,63 @@
 </head>
 <body>
 
-    <div class="controles">
-        <input type="text" id="tema" placeholder="Tema del examen...">
-        <button class="btn-gen" onclick="pedirIA()">Generar</button>
-        <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
-        <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
+    <!-- SLIDE 1: PORTADA -->
+    <div id="slide-1">
+        <h1 class="welcome-title">BIENVENIDO AL CREADOR DE EXAMENES</h1>
+        <p class="author">BY ING. ANTHONY CHILET</p>
+        <h3 style="margin-bottom: 20px;">ELIGE QUE EXAMEN CREAR:</h3>
+        <div class="menu-grid">
+            <button class="btn-menu" onclick="seleccionarExamen('pa1', 'EXAMEN PRODUCTO ACADÉMICO 01 (PA1)')">PRODUCTO ACADÉMICO 01 (PA1)</button>
+            <button class="btn-menu" onclick="seleccionarExamen('parcial', 'EXAMEN PARCIAL')">EXAMEN PARCIAL</button>
+            <button class="btn-menu" onclick="seleccionarExamen('pa2', 'EXAMEN PRODUCTO ACADÉMICO 02 (PA2)')">PRODUCTO ACADÉMICO 02 (PA2)</button>
+            <button class="btn-menu" onclick="seleccionarExamen('final', 'EXAMEN FINAL')">EXAMEN FINAL</button>
+        </div>
     </div>
 
-    <div class="hoja" id="area-impresion">
-        <!-- Contenedor del encabezado -->
-        <div class="header" id="header-web">
-            <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
-            <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
-        </div>
-       
-        <h3 style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN PA1: SOFTWARE S10</h3>
-        <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
-        
-        <div id="resultado">
-            <p style="text-align:center; color:#888; margin-top:50px;">El examen se mostrará aquí...</p>
+    <!-- SLIDE 2: INTERFAZ DE EXAMEN -->
+    <div id="slide-2">
+        <div class="controles">
+            <button class="btn-volver" onclick="volver()">← Volver</button>
+            <input type="text" id="tema" placeholder="Tema del examen...">
+            <button class="btn-gen" onclick="pedirIA()">Generar</button>
+            <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
+            <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
         </div>
 
-        <div class="footer-bar"></div>
+        <div class="hoja" id="area-impresion">
+            <div class="header" id="header-web">
+                <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
+                <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
+            </div>
+           
+            <h3 id="titulo-examen-hoja" style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN: SOFTWARE S10</h3>
+            <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
+            
+            <div id="resultado">
+                <p style="text-align:center; color:#888; margin-top:50px;">El examen se mostrará aquí...</p>
+            </div>
+
+            <div class="footer-bar"></div>
+        </div>
     </div>
 
     <script>
+        let tipoSeleccionado = '';
+        let nombreExamenFull = '';
+
+        function seleccionarExamen(tipo, nombre) {
+            tipoSeleccionado = tipo;
+            nombreExamenFull = nombre;
+            document.getElementById('titulo-examen-hoja').innerText = nombre + ": SOFTWARE S10";
+            document.getElementById('slide-1').style.display = 'none';
+            document.getElementById('slide-2').style.display = 'block';
+        }
+
+        function volver() {
+            document.getElementById('slide-1').style.display = 'flex';
+            document.getElementById('slide-2').style.display = 'none';
+        }
+
         async function pedirIA() {
             const tema = document.getElementById('tema').value;
             const caja = document.getElementById('resultado');
@@ -99,7 +156,10 @@
                 const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ tema: tema })
+                    body: JSON.stringify({ 
+                        tema: tema,
+                        tipo: tipoSeleccionado 
+                    })
                 });
                 const data = await res.json();
                 caja.innerHTML = data.contenido.replace(/```html|```/g, "");
@@ -109,65 +169,41 @@
             }
         }
 
-      async function exportarWord() {
+        async function exportarWord() {
             const ahora = new Date();
             const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
             const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
             
             const areaClone = document.getElementById('area-impresion').cloneNode(true);
-            
-            // 1. OBTENER URLS ABSOLUTAS
             const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
             const imgCISWeb = areaClone.querySelector('.logo-cis-img');
             const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
             const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
 
-            // 2. RECONSTRUIR ENCABEZADO (Tamaños en píxeles para evitar distorsión)
             const headerOriginal = areaClone.querySelector('.header');
             if(headerOriginal) {
                 headerOriginal.innerHTML = `
                     <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
                         <tr>
                             <td align="left" valign="middle" style="border:none; padding: 10px 0;">
-                                <!-- UCV: Tamaño más grande (180px) -->
-                                <img src="${urlUCV}" width="180" height="57" style="width:180px; height:90px; display:block;">
+                                <img src="${urlUCV}" width="180" height="90" style="width:180px; height:90px; display:block;">
                             </td>
                             <td align="right" valign="middle" style="border:none; padding: 10px 0;">
-                                <!-- CIS: Tamaño más grande (160px) -->
-                                <img src="${urlCIS}" width="160" height="57" style="width:160px; height:80px; display:block;">
+                                <img src="${urlCIS}" width="160" height="80" style="width:160px; height:80px; display:block;">
                             </td>
                         </tr>
                     </table>`;
             }
 
             const contenidoHTML = areaClone.innerHTML;
-
-            // 3. ESTILOS DE FUENTE CALIBRI LIGHT (Sin cambios adicionales)
-            const estilosWord = `
-                <style>
-                    @page { size: A4; margin: 2cm; }
-                    * { font-family: 'Calibri Light', sans-serif !important; }
-                    body, p, div, span, h1, h2, h3, h4, li, table, td, th {
-                        font-family: 'Calibri Light', sans-serif !important;
-                        font-size: 11pt;
-                    }
-                    table { border-collapse: collapse; width: 100%; }
-                    td, th { border: 1px solid #000000; padding: 4px; }
-                </style>`;
-
-            const documentoCompleto = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'>${estilosWord}</head>
-                <body style="font-family:'Calibri Light', sans-serif;">
-                    ${contenidoHTML}
-                </body>
-                </html>`;
+            const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
+            const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
 
             const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Examen PA1 GRUPO ${fecha} ${hora}.doc`;
+            link.download = `${nombreExamenFull} - ${fecha}.doc`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
