@@ -28,8 +28,8 @@
         }
         .btn-menu:hover { background: #e0e0e0; transform: scale(1.05); }
 
-        /* SLIDE 2: EDITOR (OCULTO INICIALMENTE) */
-        #slide-2 { display: none; }
+        /* SLIDE 2 Y 3: EDITOR */
+        #slide-2, #slide-3 { display: none; }
 
         .controles { 
             background: #1a2a3a; 
@@ -43,6 +43,7 @@
         }
         .controles input { padding: 10px; width: 300px; border-radius: 4px; border: none; font-size: 14px; }
         .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+        .btn-quiz { padding: 10px 15px; background: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
         .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         .btn-volver { padding: 10px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 15px; }
@@ -57,6 +58,14 @@
             position: relative; 
             box-sizing: border-box; 
         }
+
+        /* SLIDE 3 ESPECÍFICO */
+        .quiz-container { max-width: 1000px; margin: 20px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
+        .quiz-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .quiz-box h4 { margin-top: 0; color: #1a2a3a; border-bottom: 2px solid #ffc107; padding-bottom: 5px; }
+        textarea { width: 100%; height: 500px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; resize: none; background: #fdfdfd; box-sizing: border-box; }
+        .btn-copy { margin-top: 10px; width: 100%; padding: 12px; background: #1a2a3a; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-copy:hover { background: #000; }
 
         .header { 
             display: flex; 
@@ -80,7 +89,7 @@
 
         @media print { 
             @page { size: A4; margin: 20mm 15mm; }
-            #slide-1, .controles { display: none !important; } 
+            #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
             body { background: none; } 
             .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
@@ -106,9 +115,10 @@
     <!-- SLIDE 2: INTERFAZ DE EXAMEN -->
     <div id="slide-2">
         <div class="controles">
-            <button class="btn-volver" onclick="volver()">← Volver</button>
+            <button class="btn-volver" onclick="volverALaPortada()">← Volver</button>
             <input type="text" id="tema" placeholder="Tema del examen...">
             <button class="btn-gen" onclick="pedirIA()">Generar</button>
+            <button class="btn-quiz" onclick="irASlide3()">Generar Quiz Blackboard</button>
             <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
             <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
         </div>
@@ -130,25 +140,55 @@
         </div>
     </div>
 
+    <!-- SLIDE 3: CUESTIONARIO BLACKBOARD -->
+    <div id="slide-3">
+        <div class="controles">
+            <button class="btn-volver" onclick="volverAlEditor()">← Volver al Examen</button>
+            <h2 style="display:inline; margin-left:20px; color:white;">Generador de Quiz para Blackboard</h2>
+        </div>
+        <div class="quiz-container">
+            <div class="quiz-box">
+                <h4>Opción Múltiple (Formato Blackboard)</h4>
+                <textarea id="txt-multiple" readonly placeholder="Generando preguntas..."></textarea>
+                <button class="btn-copy" onclick="copyText('txt-multiple')">Copiar Opción Múltiple</button>
+            </div>
+            <div class="quiz-box">
+                <h4>Correspondencia / Match (Formato Blackboard)</h4>
+                <textarea id="txt-match" readonly placeholder="Generando emparejamientos..."></textarea>
+                <button class="btn-copy" onclick="copyText('txt-match')">Copiar Correspondencia</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let tipoSeleccionado = '';
         let nombreExamenFull = '';
 
         function seleccionarExamen(tipo, nombre) {
-    tipoSeleccionado = tipo;
-    nombreExamenFull = nombre;
-    
-    // Si es PA2 o FINAL, el subtítulo es MS PROJECT, de lo contrario es SOFTWARE S10
-    let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
-    
-    document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
-    document.getElementById('slide-1').style.display = 'none';
-    document.getElementById('slide-2').style.display = 'block';
-}
+            tipoSeleccionado = tipo;
+            nombreExamenFull = nombre;
+            let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
+            document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
+            document.getElementById('slide-1').style.display = 'none';
+            document.getElementById('slide-2').style.display = 'block';
+        }
 
-        function volver() {
+        function volverALaPortada() {
             document.getElementById('slide-1').style.display = 'flex';
             document.getElementById('slide-2').style.display = 'none';
+        }
+
+        function irASlide3() {
+            const tema = document.getElementById('tema').value;
+            if(!tema) return alert("Primero genera un examen en el Slide 2");
+            document.getElementById('slide-2').style.display = 'none';
+            document.getElementById('slide-3').style.display = 'block';
+            pedirQuiz();
+        }
+
+        function volverAlEditor() {
+            document.getElementById('slide-3').style.display = 'none';
+            document.getElementById('slide-2').style.display = 'block';
         }
 
         async function pedirIA() {
@@ -160,10 +200,7 @@
                 const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ 
-                        tema: tema,
-                        tipo: tipoSeleccionado 
-                    })
+                    body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
                 });
                 const data = await res.json();
                 caja.innerHTML = data.contenido.replace(/```html|```/g, "");
@@ -173,11 +210,37 @@
             }
         }
 
+        async function pedirQuiz() {
+            const tema = document.getElementById('tema').value;
+            const txtMult = document.getElementById('txt-multiple');
+            const txtMatch = document.getElementById('txt-match');
+            txtMult.value = "Generando 10 preguntas de opción múltiple...";
+            txtMatch.value = "Generando 10 preguntas de correspondencia...";
+            
+            try {
+                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
+                });
+                const data = await res.json();
+                txtMult.value = data.multiple;
+                txtMatch.value = data.match;
+            } catch (e) {
+                txtMult.value = "Error al conectar con el servidor.";
+            }
+        }
+
+        function copyText(id) {
+            const area = document.getElementById(id);
+            area.select();
+            document.execCommand('copy');
+            alert("Contenido copiado. Ya puedes pegarlo en el generador de Blackboard.");
+        }
+
         async function exportarWord() {
             const ahora = new Date();
             const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
-            const hora = ahora.getHours() + 'h' + ahora.getMinutes() + 'm';
-            
             const areaClone = document.getElementById('area-impresion').cloneNode(true);
             const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
             const imgCISWeb = areaClone.querySelector('.logo-cis-img');
