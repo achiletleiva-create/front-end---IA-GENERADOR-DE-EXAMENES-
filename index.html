@@ -5,104 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Exámenes UCV</title>
     <style>
-        /* CONFIGURACIÓN GENERAL */
         body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; overflow-x: hidden; }
-        
-        /* SLIDE 1: PORTADA */
-        #slide-1 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1a2a3a 0%, #0056b3 100%);
-            color: white;
-            text-align: center;
-        }
-        .welcome-title { font-size: 2.5rem; margin-bottom: 10px; }
-        .author { font-size: 1.2rem; color: #adb5bd; margin-bottom: 40px; }
+        #slide-1 { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #1a2a3a 0%, #0056b3 100%); color: white; text-align: center; }
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; }
-        .btn-menu { 
-            padding: 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 8px; 
-            cursor: pointer; background: white; color: #1a2a3a; transition: 0.3s;
-        }
-        .btn-menu:hover { background: #e0e0e0; transform: scale(1.05); }
-
-        /* SLIDE 2 Y 3: EDITOR */
+        .btn-menu { padding: 20px; font-weight: bold; cursor: pointer; border: none; border-radius: 8px; background: white; color: #1a2a3a; transition: 0.3s; }
         #slide-2, #slide-3 { display: none; }
-
-        .controles { 
-            background: #1a2a3a; 
-            padding: 20px; 
-            text-align: center; 
-            color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .controles input { padding: 10px; width: 300px; border-radius: 4px; border: none; font-size: 14px; }
-        .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+        .controles { background: #1a2a3a; padding: 20px; text-align: center; color: white; position: sticky; top: 0; z-index: 1000; }
+        .controles input { padding: 10px; width: 300px; border: none; border-radius: 4px; }
+        .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-quiz { padding: 10px 15px; background: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-volver { padding: 10px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 15px; }
-        
-        .hoja { 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 20mm; 
-            margin: 20px auto; 
-            background: white; 
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-            position: relative; 
-            box-sizing: border-box; 
-        }
-
-        /* SLIDE 3: CUESTIONARIO */
+        .hoja { width: 210mm; min-height: 297mm; padding: 20mm; margin: 20px auto; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.2); position: relative; box-sizing: border-box; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; margin-bottom: 20px; }
         .quiz-container { max-width: 1000px; margin: 20px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
-        .quiz-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .quiz-box h4 { margin-top: 0; color: #1a2a3a; border-bottom: 2px solid #ffc107; padding-bottom: 5px; }
         textarea { width: 100%; height: 500px; font-family: monospace; padding: 10px; resize: none; border: 1px solid #ddd; }
-        .btn-copy { margin-top: 10px; width: 100%; padding: 10px; background: #1a2a3a; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 2px solid #000; 
-            padding-bottom: 10px; 
-            margin-bottom: 20px; 
-        }
-        .logo-ucv-img { height: 60px; width: auto; }
-        .logo-cis-img { height: 50px; width: auto; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
-        th { background-color: #eeeeee; font-weight: bold; text-align: center; }
-
-        .footer-bar { 
-            position: absolute; bottom: 0; right: 0; width: 250px; height: 40px; 
-            background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
-        }
-
-        @media print { 
-            @page { size: A4; margin: 20mm 15mm; }
-            #slide-1, #slide-3, .controles { display: none !important; } 
-            #slide-2 { display: block; }
-            body { background: none; } 
-            .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
-            .footer-bar { position: fixed; bottom: 0; right: 0; }
-        }
+        .footer-bar { position: absolute; bottom: 0; right: 0; width: 250px; height: 40px; background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); }
+        @media print { .controles, #slide-1, #slide-3 { display: none !important; } #slide-2 { display: block; } .hoja { margin: 0; box-shadow: none; border: none; } }
     </style>
 </head>
 <body>
-
-    <!-- SLIDE 1: PORTADA -->
     <div id="slide-1">
-        <h1 class="welcome-title">BIENVENIDO AL CREADOR DE EXAMENES</h1>
-        <p class="author">BY ING. ANTHONY CHILET</p>
-        <h3 style="margin-bottom: 20px;">ELIGE QUE EXAMEN CREAR:</h3>
+        <h1>BIENVENIDO AL CREADOR DE EXAMENES</h1>
+        <p>BY ING. ANTHONY CHILET</p>
         <div class="menu-grid">
             <button class="btn-menu" onclick="seleccionarExamen('pa1', 'EXAMEN PRODUCTO ACADÉMICO 01 (PA1)')">PRODUCTO ACADÉMICO 01 (PA1)</button>
             <button class="btn-menu" onclick="seleccionarExamen('parcial', 'EXAMEN PARCIAL')">EXAMEN PARCIAL</button>
@@ -110,161 +33,63 @@
             <button class="btn-menu" onclick="seleccionarExamen('final', 'EXAMEN FINAL')">EXAMEN FINAL</button>
         </div>
     </div>
-
-    <!-- SLIDE 2: INTERFAZ DE EXAMEN -->
     <div id="slide-2">
         <div class="controles">
-            <button class="btn-volver" onclick="volver()">← Volver</button>
-            <input type="text" id="tema" placeholder="Tema del examen...">
+            <button onclick="location.reload()">← Volver</button>
+            <input type="text" id="tema" placeholder="Tema...">
             <button class="btn-gen" onclick="pedirIA()">Generar</button>
             <button class="btn-quiz" onclick="irAQuiz()">Generar Quiz Blackboard</button>
-            <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
-            <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
+            <button onclick="window.print()">Imprimir PDF</button>
         </div>
-
         <div class="hoja" id="area-impresion">
-            <div class="header" id="header-web">
-                <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
-                <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
+            <div class="header">
+                <img src="universidad-cesar-vallejo-logo.png" height="60">
+                <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" height="50">
             </div>
-           
-            <h3 id="titulo-examen-hoja" style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN: SOFTWARE S10</h3>
+            <h3 id="titulo-examen-hoja" style="text-align:center;">EXAMEN</h3>
             <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
-            
-            <div id="resultado">
-                <p style="text-align:center; color:#888; margin-top:50px;">El examen se mostrará aquí...</p>
-            </div>
-
+            <div id="resultado"></div>
             <div class="footer-bar"></div>
         </div>
     </div>
-
-    <!-- SLIDE 3: CUESTIONARIO BLACKBOARD -->
     <div id="slide-3">
-        <div class="controles">
-            <button class="btn-volver" onclick="volverAlEditor()">← Volver al Examen</button>
-            <h2 style="display:inline; margin-left:20px; color:white;">Generador de Quiz para Blackboard</h2>
-        </div>
+        <div class="controles"><button onclick="volverAlEditor()">← Volver</button> <h2>Quiz Blackboard</h2></div>
         <div class="quiz-container">
-            <div class="quiz-box">
-                <h4>Opción Múltiple (Formato Blackboard)</h4>
-                <textarea id="q-mult" readonly placeholder="Cargando preguntas de opción múltiple..."></textarea>
-                <button class="btn-copy" onclick="copyT('q-mult')">Copiar Opción Múltiple</button>
-            </div>
-            <div class="quiz-box">
-                <h4>Correspondencia / Match (Formato Blackboard)</h4>
-                <textarea id="q-match" readonly placeholder="Cargando preguntas de correspondencia..."></textarea>
-                <button class="btn-copy" onclick="copyT('q-match')">Copiar Correspondencia</button>
-            </div>
+            <div><h4>Opción Múltiple</h4><textarea id="q-mult" readonly></textarea></div>
+            <div><h4>Match</h4><textarea id="q-match" readonly></textarea></div>
         </div>
     </div>
-
-<script>
-    let tipoSeleccionado = '';
-    let nombreExamenFull = '';
-
-    function seleccionarExamen(tipo, nombre) {
-        tipoSeleccionado = tipo;
-        nombreExamenFull = nombre;
-        let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
-        document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
-        document.getElementById('slide-1').style.display = 'none';
-        document.getElementById('slide-2').style.display = 'block';
-    }
-
-    function volver() {
-        document.getElementById('slide-1').style.display = 'flex';
-        document.getElementById('slide-2').style.display = 'none';
-    }
-
-    function irAQuiz() {
-        const tema = document.getElementById('tema').value;
-        if(!tema) return alert("Primero genera un examen en el Slide 2");
-        document.getElementById('slide-2').style.display = 'none';
-        document.getElementById('slide-3').style.display = 'block';
-        pedirQuiz();
-    }
-
-    function volverAlEditor() {
-        document.getElementById('slide-3').style.display = 'none';
-        document.getElementById('slide-2').style.display = 'block';
-    }
-
-    async function pedirIA() {
-        const tema = document.getElementById('tema').value;
-        const caja = document.getElementById('resultado');
-        if(!tema) return alert("Escribe un tema");
-        caja.innerHTML = "Generando estructura profesional... espera unos segundos.";
-        try {
+    <script>
+        let tipoSeleccionado = '';
+        function seleccionarExamen(tipo, nombre) {
+            tipoSeleccionado = tipo;
+            let subtitulo = (tipo === 'pa2' || tipo === 'final') ? ": MS PROJECT" : ": SOFTWARE S10";
+            document.getElementById('titulo-examen-hoja').innerText = nombre + subtitulo;
+            document.getElementById('slide-1').style.display = 'none';
+            document.getElementById('slide-2').style.display = 'block';
+        }
+        function irAQuiz() { document.getElementById('slide-2').style.display = 'none'; document.getElementById('slide-3').style.display = 'block'; pedirQuiz(); }
+        function volverAlEditor() { document.getElementById('slide-3').style.display = 'none'; document.getElementById('slide-2').style.display = 'block'; }
+        async function pedirIA() {
+            const tema = document.getElementById('tema').value;
             const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
             });
             const data = await res.json();
-            caja.innerHTML = data.contenido;
+            document.getElementById('resultado').innerHTML = data.contenido;
             document.getElementById('txt-tema').innerText = tema.toUpperCase();
-        } catch (e) {
-            caja.innerHTML = "Error de conexión.";
         }
-    }
-
-    async function pedirQuiz() {
-        const tema = document.getElementById('tema').value;
-        const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
-        });
-        const data = await res.json();
-        document.getElementById('q-mult').value = data.multiple || "Error al generar";
-        document.getElementById('q-match').value = data.match || "Error al generar";
-    }
-
-    function copyT(id) {
-        const a = document.getElementById(id);
-        a.select();
-        document.execCommand('copy');
-        alert("Copiado al portapapeles.");
-    }
-
-    async function exportarWord() {
-        const ahora = new Date();
-        const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
-        const areaClone = document.getElementById('area-impresion').cloneNode(true);
-        const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
-        const imgCISWeb = areaClone.querySelector('.logo-cis-img');
-        const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
-        const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
-
-        const headerOriginal = areaClone.querySelector('.header');
-        if(headerOriginal) {
-            headerOriginal.innerHTML = `
-                <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
-                    <tr>
-                        <td align="left" valign="middle" style="border:none; padding: 10px 0;">
-                            <img src="${urlUCV}" width="180" height="90" style="width:180px; height:90px; display:block;">
-                        </td>
-                        <td align="right" valign="middle" style="border:none; padding: 10px 0;">
-                            <img src="${urlCIS}" width="160" height="80" style="width:160px; height:80px; display:block;">
-                        </td>
-                    </tr>
-                </table>`;
+        async function pedirQuiz() {
+            const tema = document.getElementById('tema').value;
+            const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
+            });
+            const data = await res.json();
+            document.getElementById('q-mult').value = data.multiple || "Error";
+            document.getElementById('q-match').value = data.match || "Error";
         }
-
-        const contenidoHTML = areaClone.innerHTML;
-        const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
-        const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
-
-        const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${nombreExamenFull} - ${fecha}.doc`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-</script>
+    </script>
 </body>
 </html>
