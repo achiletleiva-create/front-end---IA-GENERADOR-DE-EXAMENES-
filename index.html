@@ -199,7 +199,20 @@
             const tema = document.getElementById('tema').value;
             const caja = document.getElementById('resultado');
             if(!tema) return alert("Escribe un tema");
-            caja.innerHTML = "Generando estructura profesional... espera unos segundos.";
+            const mensajes = [
+                "Generando datos del proyecto...",
+                "Elaborando hoja de presupuesto...",
+                "Calculando APUs con metodología S10...",
+                "Verificando rendimientos y cuadrillas...",
+                "Calculando pie de presupuesto...",
+                "Finalizando examen, casi listo..."
+            ];
+            let msgIdx = 0;
+            caja.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">⏳ ${mensajes[0]}</p>`;
+            const intervalo = setInterval(() => {
+                msgIdx = (msgIdx + 1) % mensajes.length;
+                caja.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">⏳ ${mensajes[msgIdx]}</p>`;
+            }, 8000);
             try {
                 const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
                     method: 'POST',
@@ -207,9 +220,11 @@
                     body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
                 });
                 const data = await res.json();
+                clearInterval(intervalo);
                 caja.innerHTML = data.contenido.replace(/```html|```/g, "");
                 document.getElementById('txt-tema').innerText = tema.toUpperCase();
             } catch (e) {
+                clearInterval(intervalo);
                 caja.innerHTML = "Error de conexión.";
             }
         }
