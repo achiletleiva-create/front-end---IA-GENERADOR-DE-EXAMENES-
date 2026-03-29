@@ -52,11 +52,13 @@
             width: 210mm; 
             min-height: 297mm; 
             padding: 20mm; 
+            padding-bottom: 25mm;
             margin: 20px auto; 
             background: white; 
             box-shadow: 0 0 15px rgba(0,0,0,0.2); 
             position: relative; 
-            box-sizing: border-box; 
+            box-sizing: border-box;
+            overflow: visible;
         }
 
         /* SLIDE 3 ESPECÍFICO */
@@ -83,7 +85,9 @@
         th { background-color: #eeeeee; font-weight: bold; text-align: center; }
 
         .footer-bar { 
-            position: absolute; bottom: 0; right: 0; width: 250px; height: 40px; 
+            position: sticky; bottom: 0; 
+            width: 250px; height: 40px;
+            margin-left: auto;
             background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
         }
 
@@ -92,7 +96,7 @@
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
             body { background: none; } 
-            .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; } 
+            .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; overflow: visible; } 
             .footer-bar { position: fixed; bottom: 0; right: 0; }
         }
     </style>
