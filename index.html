@@ -220,7 +220,150 @@
             background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
         }
 
-        @media print { 
+        /* SLIDE 4: ASISTENTE CORRECTOR */
+        #slide-4 { display: none; }
+        .corrector-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+        }
+        .corrector-panel-izq {
+            background: #1a2a3a;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            border-right: 1px solid #2d3f50;
+        }
+        .corrector-panel-izq h3 { color: #7ec8ff; margin: 0 0 4px 0; font-size: 0.85rem; letter-spacing: 1px; }
+        .drop-zone {
+            border: 2px dashed rgba(126,200,255,0.4);
+            border-radius: 10px;
+            padding: 24px 16px;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: #7ec8ff;
+            background: rgba(126,200,255,0.05);
+            color: #7ec8ff;
+        }
+        .drop-zone .drop-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        #input-archivo { display: none; }
+        .preview-img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #2d3f50;
+            display: none;
+        }
+        .btn-resolver {
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .btn-resolver:hover { background: #0056b3; }
+        .btn-resolver:disabled { background: #444; cursor: not-allowed; }
+        .btn-limpiar-chat {
+            padding: 10px;
+            background: transparent;
+            color: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-limpiar-chat:hover { color: white; border-color: white; }
+        .corrector-panel-der {
+            display: flex;
+            flex-direction: column;
+            background: #f0f2f5;
+            overflow: hidden;
+        }
+        .chat-mensajes {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .msg-ia, .msg-user {
+            max-width: 90%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .msg-ia {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            align-self: flex-start;
+            border-left: 3px solid #007bff;
+        }
+        .msg-user {
+            background: #1a2a3a;
+            color: white;
+            align-self: flex-end;
+            border-radius: 12px 12px 2px 12px;
+        }
+        .msg-ia table { font-size: 12px; margin: 8px 0; }
+        .msg-ia th { background: #1a237e; color: white; padding: 6px 8px; }
+        .msg-ia td { padding: 5px 8px; border: 1px solid #c5cae9; }
+        .chat-input-area {
+            padding: 16px 20px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .chat-input-area textarea {
+            flex: 1;
+            height: 44px;
+            min-height: 44px;
+            max-height: 120px;
+            resize: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            outline: none;
+        }
+        .chat-input-area textarea:focus { border-color: #007bff; }
+        .btn-enviar {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            height: 44px;
+        }
+        .btn-enviar:hover { background: #0056b3; }
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 3px solid #007bff;
+            color: #888;
+            font-size: 13px;
+        } 
             @page { size: A4; margin: 20mm 15mm; }
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
@@ -264,6 +407,11 @@
                 <span class="btn-icon">🏆</span>
                 EXAMEN FINAL
                 <span class="btn-label">MS Project Avanzado</span>
+            </button>
+            <button class="btn-menu" onclick="irASlide4()" style="grid-column: span 2; background: rgba(0,150,100,0.15); border-color: rgba(0,200,130,0.4);">
+                <span class="btn-icon">🤖</span>
+                ASISTENTE CORRECTOR
+                <span class="btn-label">Sube tu examen y obtén la solución</span>
             </button>
         </div>
     </div>
@@ -312,6 +460,47 @@
                 <h4>Correspondencia / Match (Formato Blackboard)</h4>
                 <textarea id="txt-match" readonly placeholder="Generando emparejamientos..."></textarea>
                 <button class="btn-copy" onclick="copyText('txt-match')">Copiar Correspondencia</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: ASISTENTE CORRECTOR -->
+    <div id="slide-4">
+        <div class="controles">
+            <button class="btn-volver" onclick="volverDesdeCorrector()">← Volver</button>
+            <h2 style="display:inline; margin-left:20px; color:white; font-size:1rem;">🤖 Asistente Corrector de Exámenes</h2>
+        </div>
+        <div class="corrector-layout">
+            <div class="corrector-panel-izq">
+                <h3>SUBIR EXAMEN</h3>
+                <div class="drop-zone" id="drop-zone" onclick="document.getElementById('input-archivo').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropArchivo(event)">
+                    <span class="drop-icon">📄</span>
+                    Arrastra tu examen aquí<br>
+                    <small>PDF, JPG o PNG</small>
+                </div>
+                <input type="file" id="input-archivo" accept=".pdf,.jpg,.jpeg,.png" onchange="cargarArchivo(event)">
+                <img id="preview-img" class="preview-img" alt="Vista previa">
+                <div id="nombre-archivo" style="color:rgba(255,255,255,0.5); font-size:0.75rem; text-align:center;"></div>
+                <button class="btn-resolver" id="btn-resolver" onclick="resolverExamen()" disabled>Resolver Examen</button>
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <h3>INSTRUCCIONES</h3>
+                <p style="color:rgba(255,255,255,0.5); font-size:0.75rem; line-height:1.6;">
+                    1. Sube el PDF o imagen del examen<br>
+                    2. Presiona <b style="color:#7ec8ff;">Resolver Examen</b><br>
+                    3. Revisa la solución en el chat<br>
+                    4. Si hay un error, escríbelo en el chat para corregirlo
+                </p>
+                <button class="btn-limpiar-chat" onclick="limpiarChat()">🗑 Limpiar conversación</button>
+            </div>
+            <div class="corrector-panel-der">
+                <div class="chat-mensajes" id="chat-mensajes">
+                    <div class="msg-ia">👋 Hola, soy tu asistente corrector. Sube el examen en PDF o imagen y presiona <b>Resolver Examen</b> para obtener la solución completa con desarrollo paso a paso.</div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">⏳ Analizando y calculando...</div>
+                <div class="chat-input-area">
+                    <textarea id="chat-input" placeholder="Escribe aquí si la IA cometió un error o tienes una pregunta..." onkeydown="chatKeyDown(event)"></textarea>
+                    <button class="btn-enviar" onclick="enviarMensaje()">Enviar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -445,6 +634,128 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+        // ── SLIDE 4: ASISTENTE CORRECTOR ────────────────────────────────────
+        let historialChat = [];
+        let archivoBase64 = null;
+        let archivoMime = null;
+
+        function irASlide4() {
+            document.getElementById('slide-1').style.display = 'none';
+            document.getElementById('slide-4').style.display = 'block';
+        }
+
+        function volverDesdeCorrector() {
+            document.getElementById('slide-4').style.display = 'none';
+            document.getElementById('slide-1').style.display = 'flex';
+        }
+
+        function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+        function dragLeave(e) { document.getElementById('drop-zone').classList.remove('drag-over'); }
+        function dropArchivo(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) procesarArchivo(file);
+        }
+
+        function cargarArchivo(e) {
+            const file = e.target.files[0];
+            if (file) procesarArchivo(file);
+        }
+
+        function procesarArchivo(file) {
+            const tipos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+            if (!tipos.includes(file.type)) return alert('Solo se aceptan PDF, JPG o PNG.');
+            archivoMime = file.type;
+            document.getElementById('nombre-archivo').textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64Full = e.target.result;
+                archivoBase64 = base64Full.split(',')[1];
+                if (file.type.startsWith('image/')) {
+                    const img = document.getElementById('preview-img');
+                    img.src = base64Full;
+                    img.style.display = 'block';
+                } else {
+                    document.getElementById('preview-img').style.display = 'none';
+                }
+                document.getElementById('btn-resolver').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function resolverExamen() {
+            if (!archivoBase64) return alert('Primero sube el examen.');
+            const msgInicial = 'Analiza este examen completo y resuélvelo paso a paso en formato tabla HTML. Muestra todo el desarrollo.';
+            historialChat = [{ role: 'user', content: msgInicial }];
+            agregarMensajeChat('user', msgInicial);
+            await llamarIA();
+        }
+
+        async function enviarMensaje() {
+            const input = document.getElementById('chat-input');
+            const texto = input.value.trim();
+            if (!texto) return;
+            input.value = '';
+            historialChat.push({ role: 'user', content: texto });
+            agregarMensajeChat('user', texto);
+            await llamarIA();
+        }
+
+        function chatKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
+        }
+
+        async function llamarIA() {
+            const typing = document.getElementById('typing-indicator');
+            typing.style.display = 'block';
+            scrollChat();
+            try {
+                const body = { mensajes: historialChat };
+                if (historialChat.length === 1) { body.imagen = archivoBase64; body.mimeType = archivoMime; }
+                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/resolver-examen', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                typing.style.display = 'none';
+                if (data.respuesta) {
+                    historialChat.push({ role: 'assistant', content: data.respuesta });
+                    agregarMensajeChat('ia', data.respuesta);
+                } else {
+                    agregarMensajeChat('ia', 'Error: ' + (data.error || 'No se obtuvo respuesta.'));
+                }
+            } catch (e) {
+                typing.style.display = 'none';
+                agregarMensajeChat('ia', 'Error de conexión con el servidor.');
+            }
+        }
+
+        function agregarMensajeChat(tipo, contenido) {
+            const caja = document.getElementById('chat-mensajes');
+            const div = document.createElement('div');
+            div.className = tipo === 'ia' ? 'msg-ia' : 'msg-user';
+            div.innerHTML = tipo === 'ia' ? contenido : `<span style="white-space:pre-wrap">${contenido}</span>`;
+            caja.appendChild(div);
+            scrollChat();
+        }
+
+        function scrollChat() {
+            const caja = document.getElementById('chat-mensajes');
+            setTimeout(() => { caja.scrollTop = caja.scrollHeight; }, 50);
+        }
+
+        function limpiarChat() {
+            historialChat = [];
+            archivoBase64 = null;
+            archivoMime = null;
+            document.getElementById('chat-mensajes').innerHTML = '<div class="msg-ia">👋 Conversación limpiada. Sube un nuevo examen para comenzar.</div>';
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('nombre-archivo').textContent = '';
+            document.getElementById('btn-resolver').disabled = true;
+            document.getElementById('input-archivo').value = '';
         }
     </script>
 </body>
