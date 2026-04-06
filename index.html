@@ -363,7 +363,9 @@
             border-left: 3px solid #007bff;
             color: #888;
             font-size: 13px;
-        } 
+        }
+
+        @media print {
             @page { size: A4; margin: 20mm 15mm; }
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
