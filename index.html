@@ -569,8 +569,16 @@
                 });
                 const data = await res.json();
                 clearInterval(intervalo);
-                caja.innerHTML = data.contenido.replace(/```html|```/g, "");
-                document.getElementById('txt-tema').innerText = tema.toUpperCase();
+                if (tipoSeleccionado === 'competencias') {
+                    // El examen de competencias tiene su propio HTML completo
+                    // Se abre en ventana nueva para preservar estilos y paginación A4
+                    const ventana = window.open('', '_blank');
+                    ventana.document.write(data.contenido);
+                    ventana.document.close();
+                } else {
+                    caja.innerHTML = data.contenido.replace(/```html|```/g, "");
+                    document.getElementById('txt-tema').innerText = tema.toUpperCase();
+                }
             } catch (e) {
                 clearInterval(intervalo);
                 caja.innerHTML = "Error de conexión.";
