@@ -157,37 +157,192 @@
         .btn-menu .btn-icon { font-size: 1.4rem; display: block; margin-bottom: 6px; }
         .btn-menu .btn-label { display: block; font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 3px; letter-spacing: 1px; }
 
-        /* SLIDE 2 Y 3: EDITOR */
-        #slide-2, #slide-3 { display: none; }
+        /* SLIDE 2 Y 3: EDITOR MODERNO */
+        #slide-2, #slide-3 { 
+            display: none; 
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0d2137 50%, #0a3d6b 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #slide-2::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(0,86,179,0.08) 0%, transparent 70%);
+            top: -200px; right: -200px;
+            border-radius: 50%;
+        }
+        
+        #slide-2::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0,150,255,0.05) 0%, transparent 70%);
+            bottom: -150px; left: -150px;
+            border-radius: 50%;
+        }
 
         .controles { 
-            background: #1a2a3a; 
-            padding: 20px; 
-            text-align: center; 
+            background: rgba(26, 42, 58, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 25px 30px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             color: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid rgba(0,150,255,0.2);
         }
-        .controles input { padding: 10px; width: 300px; border-radius: 4px; border: none; font-size: 14px; }
-        .btn-gen { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .btn-quiz { padding: 10px 15px; background: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .btn-print { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-word { padding: 10px 15px; background: #213f9a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-        .btn-volver { padding: 10px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 15px; }
+        
+        .controles-izquierda {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .controles-derecha {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .controles input { 
+            padding: 12px 18px; 
+            width: 350px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(0,150,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .controles input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .controles input:focus {
+            outline: none;
+            border-color: rgba(0,150,255,0.6);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px rgba(0,150,255,0.2);
+        }
+        
+        .btn-moderno {
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-volver { 
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        
+        .btn-gen { 
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn-gen:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,123,255,0.4);
+        }
+        
+        .btn-quiz { 
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+            box-shadow: 0 4px 15px rgba(255,193,7,0.3);
+        }
+        
+        .btn-quiz:hover {
+            background: linear-gradient(135deg, #e0a800, #d39e00);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,193,7,0.4);
+        }
+        
+        .btn-print { 
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+        
+        .btn-print:hover {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+        }
+        
+        .btn-word { 
+            background: linear-gradient(135deg, #213f9a, #1a2d70);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33,63,154,0.3);
+        }
+        
+        .btn-word:hover {
+            background: linear-gradient(135deg, #1a2d70, #132060);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33,63,154,0.4);
+        }
+        
+        .contenedor-examen {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .examen-wrapper {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .examen-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff, #ffc107, #28a745, #213f9a);
+        }
         
         .hoja { 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 20mm; 
-            padding-bottom: 25mm;
-            margin: 20px auto; 
-            background: white; 
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-            position: relative; 
+            width: 100%;
+            min-height: 600px;
+            padding: 40px 50px;
+            background: white;
+            position: relative;
             box-sizing: border-box;
-            overflow: visible;
         }
 
         /* SLIDE 3 ESPECÍFICO */
@@ -365,13 +520,94 @@
             font-size: 13px;
         }
 
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .controles {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .controles-izquierda {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controles-derecha {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .controles input {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .btn-moderno {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+            
+            .contenedor-examen {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            
+            .examen-wrapper {
+                border-radius: 15px;
+            }
+            
+            .hoja {
+                padding: 25px 20px;
+            }
+            
+            .header img {
+                max-width: 60px !important;
+                max-height: 60px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controles {
+                padding: 15px;
+            }
+            
+            .controles-derecha {
+                gap: 8px;
+            }
+            
+            .btn-moderno {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+            
+            .btn-moderno span {
+                display: none;
+            }
+            
+            .hoja {
+                padding: 20px 15px;
+            }
+            
+            .header img {
+                max-width: 50px !important;
+                max-height: 50px !important;
+            }
+        }
+
         @media print {
             @page { size: A4; margin: 20mm 15mm; }
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
             body { background: none; } 
+            .contenedor-examen { margin: 0; padding: 0; }
+            .examen-wrapper { border-radius: 0; box-shadow: none; }
             .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; overflow: visible; } 
-            .footer-bar { position: fixed; bottom: 0; right: 0; }
+            .footer-bar { display: none !important; }
+            .header img { max-width: 80px !important; max-height: 80px !important; }
+            .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -423,31 +659,56 @@
         </div>
     </div>
 
-    <!-- SLIDE 2: INTERFAZ DE EXAMEN -->
+    <!-- SLIDE 2: INTERFAZ DE EXAMEN MODERNA -->
     <div id="slide-2">
         <div class="controles">
-            <button class="btn-volver" onclick="volverALaPortada()">← Volver</button>
-            <input type="text" id="tema" placeholder="Tema del examen...">
-            <button class="btn-gen" onclick="pedirIA()">Generar</button>
-            <button class="btn-quiz" onclick="irASlide3()">Generar Quiz Blackboard</button>
-            <button class="btn-print" onclick="window.print()">Imprimir PDF</button>
-            <button class="btn-word" onclick="exportarWord()">Descarga Word(.doc)</button>
+            <div class="controles-izquierda">
+                <button class="btn-moderno btn-volver" onclick="volverALaPortada()">
+                    <span>×</span> Volver
+                </button>
+                <input type="text" id="tema" placeholder="Ingresa el tema del examen...">
+                <button class="btn-moderno btn-gen" onclick="pedirIA()">
+                    <span>+</span> Generar
+                </button>
+            </div>
+            <div class="controles-derecha">
+                <button class="btn-moderno btn-quiz" onclick="irASlide3()">
+                    <span>?</span> Quiz
+                </button>
+                <button class="btn-moderno btn-print" onclick="window.print()">
+                    <span>?</span> PDF
+                </button>
+                <button class="btn-moderno btn-word" onclick="exportarWord()">
+                    <span>?</span> Word
+                </button>
+            </div>
         </div>
 
-        <div class="hoja" id="area-impresion">
-            <div class="header" id="header-web">
-                <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
-                <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
-            </div>
-           
-            <h3 id="titulo-examen-hoja" style="text-align:center; text-decoration:underline; margin-top:20px;">EXAMEN: SOFTWARE S10</h3>
-            <p><strong>TEMA:</strong> <span id="txt-tema">...</span></p>
-            
-            <div id="resultado">
-                <p style="text-align:center; color:#888; margin-top:50px;">El examen se mostrará aquí...</p>
-            </div>
+        <div class="contenedor-examen">
+            <div class="examen-wrapper">
+                <div class="hoja" id="area-impresion">
+                    <div class="header" id="header-web">
+                        <img src="universidad-cesar-vallejo-logo.png" class="logo-ucv-img" alt="UCV">
+                        <img src="cis%20logo%20Centro%20de%20Informatica%20y%20Sistemas.jpg" class="logo-cis-img" alt="CIS">
+                    </div>
+                    
+                    <h3 id="titulo-examen-hoja" style="text-align:center; text-decoration:underline; margin-top:20px; color: #1a237e; font-weight: 600;">EXAMEN: SOFTWARE S10</h3>
+                    <p style="text-align:center; color: #666; margin-bottom: 30px;">
+                        <strong style="color: #1a237e;">TEMA:</strong> 
+                        <span id="txt-tema" style="color: #333;">...</span>
+                    </p>
+                    
+                    <div id="resultado" style="min-height: 400px;">
+                        <div style="text-align:center; color:#888; margin-top:80px; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;">?</div>
+                            <p style="font-size: 16px; margin: 0;">El examen se generará aquí...</p>
+                            <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">Ingresa un tema y presiona "Generar"</p>
+                        </div>
+                    </div>
 
-            <div class="footer-bar"></div>
+                    <div class="footer-bar"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -702,7 +963,7 @@
 
         async function resolverExamen() {
             if (!archivoBase64) return alert('Primero sube el examen.');
-            const msgInicial = 'Analiza este examen completo y resuélvelo paso a paso en formato tabla HTML. Muestra todo el desarrollo.';
+            const msgInicial = 'Analiza este examen completo y resuélvelo. Responde ÚNICAMENTE en HTML con tablas formateadas. PROHIBIDO usar markdown o texto plano. Muestra el desarrollo completo paso a paso con tablas HTML para cada sección.';
             historialChat = [{ role: 'user', content: msgInicial }];
             agregarMensajeChat('user', msgInicial);
             await llamarIA();
@@ -773,5 +1034,6 @@
             document.getElementById('input-archivo').value = '';
         }
     </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
