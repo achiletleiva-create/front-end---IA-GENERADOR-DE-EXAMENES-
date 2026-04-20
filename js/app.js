@@ -112,6 +112,11 @@ class ExamGenerator {
             return;
         }
 
+        if (!this.examType) {
+            this.mostrarError('Por favor selecciona un tipo de examen primero');
+            return;
+        }
+
         document.getElementById('txt-tema').textContent = tema;
         document.getElementById('resultado').innerHTML = '<p style="text-align:center;">Generando examen...</p>';
 
@@ -132,7 +137,7 @@ class ExamGenerator {
                 throw new Error(data.error);
             }
 
-            document.getElementById('resultado').innerHTML = data.html || data.content;
+            document.getElementById('resultado').innerHTML = data.html || data.contenido || data.content;
             
             // Aplicar correcciones si es necesario
             if (this.examType === 'pa1' || this.examType === 'parcial') {
