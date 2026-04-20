@@ -116,7 +116,7 @@ class ExamGenerator {
         document.getElementById('resultado').innerHTML = '<p style="text-align:center;">Generando examen...</p>';
 
         try {
-            const response = await fetch('/generar-examen', {
+            const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tema, tipo: this.examType })
@@ -158,7 +158,7 @@ class ExamGenerator {
         document.getElementById('txt-match').value = 'Generando emparejamientos...';
 
         try {
-            const response = await fetch('/generar-quiz', {
+            const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tema, tipo: this.examType })
@@ -254,7 +254,7 @@ class ExamGenerator {
         btnResolver.textContent = 'Resolviendo...';
 
         try {
-            const response = await fetch('/resolver-examen', {
+            const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/resolver-examen', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
