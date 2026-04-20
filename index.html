@@ -823,7 +823,7 @@
                 caja.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">⏳ ${mensajes[msgIdx]}</p>`;
             }, 8000);
             try {
-                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
+                const res = await fetch('/generar-examen', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
@@ -854,7 +854,7 @@
             txtMatch.value = "Generando 10 preguntas de correspondencia...";
             
             try {
-                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+                const res = await fetch('/generar-quiz', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
@@ -990,7 +990,7 @@
             try {
                 const body = { mensajes: historialChat };
                 if (historialChat.length === 1) { body.imagen = archivoBase64; body.mimeType = archivoMime; }
-                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/resolver-examen', {
+                const res = await fetch('/resolver-examen', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
