@@ -116,14 +116,19 @@
             margin-bottom: 16px;
             z-index: 1;
         }
-        .menu-grid {
+                .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            max-width: 560px;
-            z-index: 1;
+            gap: 16px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            justify-items: center;
+            align-items: center;
         }
-        .btn-menu {
+                .btn-menu {
+            width: 100%;
+            max-width: 280px;
             padding: 18px 20px;
             font-family: 'Montserrat', Arial, sans-serif;
             font-size: 0.8rem;
@@ -138,6 +143,7 @@
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
         .btn-menu::before {
             content: '';
@@ -234,7 +240,7 @@
             box-shadow: 0 0 20px rgba(0,150,255,0.2);
         }
         
-        .btn-moderno {
+                .btn-moderno {
             padding: 12px 20px; 
             border: none; 
             border-radius: 25px; 
@@ -247,6 +253,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
         .btn-volver { 
