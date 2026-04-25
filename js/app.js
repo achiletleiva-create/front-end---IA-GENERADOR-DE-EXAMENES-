@@ -147,6 +147,10 @@ class ExamGenerator {
             });
             document.getElementById('resultado').innerHTML = tempDiv.innerHTML;
             
+            // Mostrar el botón "Nuevo Examen" después de generar exitosamente
+            const btnNuevo = document.getElementById('btn-nuevo-examen');
+            if (btnNuevo) btnNuevo.style.display = 'inline-flex';
+            
             // Aplicar correcciones si es necesario
             if (this.examType === 'pa1' || this.examType === 'parcial') {
                 const resultado = document.getElementById('resultado');
@@ -464,4 +468,8 @@ function copyText(elementId) {
 
 function exportarWord() {
     app.exportarWord();
+}
+
+function nuevoExamen() {
+    location.reload();
 }

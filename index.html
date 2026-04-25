@@ -316,6 +316,18 @@
             box-shadow: 0 6px 20px rgba(33,63,154,0.4);
         }
         
+        .btn-nuevo { 
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
+        }
+        
+        .btn-nuevo:hover {
+            background: linear-gradient(135deg, #a71d2a, #7a151f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+        }
+        
         .contenedor-examen {
             max-width: 1200px;
             margin: 40px auto;
@@ -738,6 +750,9 @@
                 <button class="btn-moderno btn-word" onclick="exportarWord()">
                     <i class="fas fa-file-word"></i> Word
                 </button>
+                <button class="btn-moderno btn-nuevo" id="btn-nuevo-examen" onclick="nuevoExamen()" style="display:none;">
+                    <i class="fas fa-plus-circle"></i> Nuevo
+                </button>
             </div>
         </div>
 
@@ -899,6 +914,8 @@
                     });
                     caja.innerHTML = tempDiv.innerHTML;
                 }
+                // Mostrar el botón "Nuevo Examen" después de generar exitosamente
+                document.getElementById('btn-nuevo-examen').style.display = 'inline-flex';
             } catch (e) {
                 clearInterval(intervalo);
                 caja.innerHTML = "Error de conexión.";
@@ -924,6 +941,11 @@
             } catch (e) {
                 txtMult.value = "Error al conectar con el servidor.";
             }
+        }
+
+        function nuevoExamen() {
+            // Recargar la página completamente (como F5)
+            location.reload();
         }
 
         function copyText(id) {
