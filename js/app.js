@@ -135,7 +135,17 @@ class ExamGenerator {
                 throw new Error(data.error);
             }
 
-            document.getElementById('resultado').innerHTML = data.html || data.contenido || data.content;
+            let htmlContent = data.html || data.contenido || data.content;
+            
+            // Forzar centrado y subrayado en todos los títulos del contenido generado
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
+                h.style.textAlign = 'center';
+                h.style.textDecoration = 'underline';
+                h.style.color = '#1a237e';
+            });
+            document.getElementById('resultado').innerHTML = tempDiv.innerHTML;
             
             // Aplicar correcciones si es necesario
             if (this.examType === 'pa1' || this.examType === 'parcial') {
@@ -370,6 +380,15 @@ class ExamGenerator {
             * { font-family: 'Calibri Light', sans-serif !important; }
             body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 10pt; }
             #titulo-examen-hoja { text-align:center !important; text-decoration:underline !important; font-size:14pt !important; margin-top:15px !important; margin-bottom:20px !important; color:#1a237e !important; font-weight:600 !important; }
+            #resultado h1, #resultado h2, #resultado h3, #resultado h4 {
+                text-align: center !important;
+                text-decoration: underline !important;
+                color: #1a237e !important;
+            }
+            #resultado h1 { font-size: 14pt !important; }
+            #resultado h2 { font-size: 13pt !important; }
+            #resultado h3 { font-size: 12pt !important; }
+            #resultado h4 { font-size: 11pt !important; }
             table { border-collapse: collapse; width: 100%; }
             td, th { border: 1px solid #000000; padding: 4px; font-size: 9pt; }
             p, li, div:not(.header) { font-size: 10pt; }

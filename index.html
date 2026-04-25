@@ -383,6 +383,20 @@
             background: repeating-linear-gradient(90deg, #0056b3, #0056b3 6px, #fff 6px, #fff 12px); 
         }
 
+        /* Estilos para el contenido del examen generado por IA */
+        #resultado h1,
+        #resultado h2,
+        #resultado h3,
+        #resultado h4 {
+            text-align: center !important;
+            text-decoration: underline !important;
+            color: #1a237e !important;
+        }
+        #resultado h1 { font-size: 16pt; }
+        #resultado h2 { font-size: 14pt; }
+        #resultado h3 { font-size: 13pt; }
+        #resultado h4 { font-size: 12pt; }
+
         /* SLIDE 4: ASISTENTE CORRECTOR */
         #slide-4 { display: none; }
         .corrector-layout {
@@ -638,6 +652,19 @@
             .hoja p, .hoja li, .hoja div:not(.header) {
                 font-size: 10pt !important;
             }
+            /* Títulos del contenido generado centrados y subrayados en PDF */
+            #resultado h1,
+            #resultado h2,
+            #resultado h3,
+            #resultado h4 {
+                text-align: center !important;
+                text-decoration: underline !important;
+                color: #1a237e !important;
+            }
+            #resultado h1 { font-size: 14pt !important; }
+            #resultado h2 { font-size: 13pt !important; }
+            #resultado h3 { font-size: 12pt !important; }
+            #resultado h4 { font-size: 11pt !important; }
         }
     </style>
 </head>
@@ -861,7 +888,16 @@
                     ventana.document.write(data.contenido);
                     ventana.document.close();
                 } else {
-                    caja.innerHTML = data.contenido.replace(/```html|```/g, "");
+                    let html = data.contenido.replace(/```html|```/g, "");
+                    // Forzar centrado y subrayado en todos los títulos del contenido generado
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
+                        h.style.textAlign = 'center';
+                        h.style.textDecoration = 'underline';
+                        h.style.color = '#1a237e';
+                    });
+                    caja.innerHTML = tempDiv.innerHTML;
                 }
             } catch (e) {
                 clearInterval(intervalo);
