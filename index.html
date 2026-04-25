@@ -677,7 +677,50 @@
             #resultado h2 { font-size: 13pt !important; }
             #resultado h3 { font-size: 12pt !important; }
             #resultado h4 { font-size: 11pt !important; }
+            
+            /* ── SISTEMA DE PAGINACIÓN PARA PDF ── */
+            .page-break {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+            .page-break-after {
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+            .keep-together {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .avoid-break {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .page-container {
+                padding: 0 !important;
+            }
+            /* Evitar que tablas se partan mal */
+            .examen-ucv table {
+                page-break-inside: auto !important;
+            }
+            .examen-ucv tr {
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+            .examen-ucv thead {
+                display: table-header-group !important;
+            }
+            .examen-ucv tfoot {
+                display: table-footer-group !important;
+            }
+            /* Asegurar que el header se repita en cada página */
+            .header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 20px !important;
+            }
         }
+
     </style>
 </head>
 <body>

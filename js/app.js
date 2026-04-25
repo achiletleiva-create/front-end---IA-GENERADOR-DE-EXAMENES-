@@ -396,6 +396,46 @@ class ExamGenerator {
             table { border-collapse: collapse; width: 100%; }
             td, th { border: 1px solid #000000; padding: 4px; font-size: 9pt; }
             p, li, div:not(.header) { font-size: 10pt; }
+            
+            /* ── SISTEMA DE PAGINACIÓN PARA WORD ── */
+            .page-break {
+                page-break-before: always !important;
+                mso-page-break-before: always !important;
+            }
+            .page-break-after {
+                page-break-after: always !important;
+                mso-page-break-after: always !important;
+            }
+            .keep-together {
+                page-break-inside: avoid !important;
+                mso-page-break-inside: avoid !important;
+            }
+            .avoid-break {
+                page-break-inside: avoid !important;
+                mso-page-break-inside: avoid !important;
+            }
+            .page-container {
+                padding: 0 !important;
+            }
+            .examen-ucv table {
+                page-break-inside: auto !important;
+            }
+            .examen-ucv tr {
+                page-break-inside: avoid !important;
+                mso-page-break-inside: avoid !important;
+            }
+            .examen-ucv thead {
+                display: table-header-group !important;
+            }
+            .examen-ucv tfoot {
+                display: table-footer-group !important;
+            }
+            .header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 20px !important;
+            }
         </style>`;
         const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
 
