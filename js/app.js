@@ -78,7 +78,6 @@ class ExamGenerator {
         this.examTitle = titulo;
         
         document.getElementById('titulo-examen-hoja').textContent = titulo;
-        document.getElementById('txt-tema').textContent = '...';
         
         this.showSlide(2);
     }
@@ -117,7 +116,6 @@ class ExamGenerator {
             return;
         }
 
-        document.getElementById('txt-tema').textContent = tema;
         document.getElementById('resultado').innerHTML = '<p style="text-align:center;">Generando examen...</p>';
 
         try {
@@ -360,8 +358,22 @@ class ExamGenerator {
                 </table>`;
         }
 
+        // Mejorar el título para que esté centrado, subrayado y con tamaño elegante
+        const tituloHoja = areaClone.querySelector('#titulo-examen-hoja');
+        if (tituloHoja) {
+            tituloHoja.style.cssText = 'text-align:center; text-decoration:underline; font-size:14pt; margin-top:15px; margin-bottom:20px; color:#1a237e; font-weight:600;';
+        }
+
         const contenidoHTML = areaClone.innerHTML;
-        const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
+        const estilosWord = `<style>
+            @page { size: A4; margin: 2cm; }
+            * { font-family: 'Calibri Light', sans-serif !important; }
+            body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 10pt; }
+            #titulo-examen-hoja { text-align:center !important; text-decoration:underline !important; font-size:14pt !important; margin-top:15px !important; margin-bottom:20px !important; color:#1a237e !important; font-weight:600 !important; }
+            table { border-collapse: collapse; width: 100%; }
+            td, th { border: 1px solid #000000; padding: 4px; font-size: 9pt; }
+            p, li, div:not(.header) { font-size: 10pt; }
+        </style>`;
         const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
 
         const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
