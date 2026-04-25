@@ -881,43 +881,7 @@
             alert("Contenido copiado. Ya puedes pegarlo en el generador de Blackboard.");
         }
 
-        async function exportarWord() {
-            const ahora = new Date();
-            const fecha = ahora.toLocaleDateString('es-PE').replace(/\//g, '-');
-            const areaClone = document.getElementById('area-impresion').cloneNode(true);
-            const imgUCVWeb = areaClone.querySelector('.logo-ucv-img');
-            const imgCISWeb = areaClone.querySelector('.logo-cis-img');
-            const urlUCV = imgUCVWeb ? new URL(imgUCVWeb.getAttribute('src'), window.location.href).href : '';
-            const urlCIS = imgCISWeb ? new URL(imgCISWeb.getAttribute('src'), window.location.href).href : '';
-
-            const headerOriginal = areaClone.querySelector('.header');
-            if(headerOriginal) {
-                headerOriginal.innerHTML = `
-                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%; border-bottom:2px solid black; margin-bottom:10px;">
-                        <tr>
-                            <td align="left" valign="middle" style="border:none; padding: 10px 0;">
-                                <img src="${urlUCV}" width="180" height="90" style="width:180px; height:90px; display:block;">
-                            </td>
-                            <td align="right" valign="middle" style="border:none; padding: 10px 0;">
-                                <img src="${urlCIS}" width="160" height="80" style="width:160px; height:80px; display:block;">
-                            </td>
-                        </tr>
-                    </table>`;
-            }
-
-            const contenidoHTML = areaClone.innerHTML;
-            const estilosWord = `<style>@page { size: A4; margin: 2cm; } * { font-family: 'Calibri Light', sans-serif !important; } body, p, div, span, h1, h2, h3, h4, li, table, td, th { font-family: 'Calibri Light', sans-serif !important; font-size: 11pt; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #000000; padding: 4px; }</style>`;
-            const documentoCompleto = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>${estilosWord}</head><body style="font-family:'Calibri Light', sans-serif;">${contenidoHTML}</body></html>`;
-
-            const blob = new Blob(['\ufeff', documentoCompleto], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${nombreExamenFull} - ${fecha}.doc`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+        // La función exportarWord() ahora está definida en js/app.js
         // ── SLIDE 4: ASISTENTE CORRECTOR ────────────────────────────────────
         let historialChat = [];
         let archivoBase64 = null;
