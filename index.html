@@ -375,8 +375,9 @@
 
         .header { 
             display: flex; 
-            justify-content: space-between; 
+            justify-content: center; 
             align-items: center; 
+            gap: 40px;
             border-bottom: 2px solid #000; 
             padding-bottom: 10px; 
             margin-bottom: 20px; 
@@ -408,6 +409,18 @@
         #resultado h2 { font-size: 14pt; }
         #resultado h3 { font-size: 13pt; }
         #resultado h4 { font-size: 12pt; }
+
+        /* Forzar que los navegadores impriman colores de fondo en los totales */
+        .examen-ucv tr[style*="background:#1a237e"],
+        .examen-ucv tr[style*="background: #1a237e"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .examen-ucv tr[style*="background:#1a237e"] td,
+        .examen-ucv tr[style*="background: #1a237e"] td {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
 
         /* SLIDE 4: ASISTENTE CORRECTOR */
         #slide-4 { display: none; }
@@ -635,13 +648,33 @@
             @page { size: A4; margin: 20mm 15mm; }
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
-            body { background: none; } 
+            body { background: none; }
+            /* Forzar impresión de colores de fondo en todos los elementos */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             .contenedor-examen { margin: 0; padding: 0; }
             .examen-wrapper { border-radius: 0; box-shadow: none; }
             .hoja { margin: 0; border: none; width: 100%; box-shadow: none; padding: 0; overflow: visible; } 
             .footer-bar { display: none !important; }
             .header img { max-width: 80px !important; max-height: 80px !important; }
-            .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+            .header { display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 20px; }
+            /* Forzar fondo azul en la fila de COSTO UNITARIO TOTAL al imprimir */
+            .examen-ucv tr[style*="background:#1a237e"],
+            .examen-ucv tr[style*="background: #1a237e"] {
+                background: #1a237e !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .examen-ucv tr[style*="background:#1a237e"] td,
+            .examen-ucv tr[style*="background: #1a237e"] td {
+                background: #1a237e !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             /* Estilos mejorados para PDF */
             #titulo-examen-hoja {
                 text-align: center !important;
@@ -715,8 +748,9 @@
             /* Asegurar que el header se repita en cada página */
             .header {
                 display: flex !important;
-                justify-content: space-between !important;
+                justify-content: center !important;
                 align-items: center !important;
+                gap: 40px !important;
                 margin-bottom: 20px !important;
             }
         }
