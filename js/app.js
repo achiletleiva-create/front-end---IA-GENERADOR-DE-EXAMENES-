@@ -58,6 +58,17 @@ class ExamGenerator {
             generateBtn.removeAttribute('onclick');
             generateBtn.addEventListener('click', () => this.pedirIA());
         }
+
+        // Permitir que al presionar Enter en el input del tema se ejecute pedirIA()
+        const temaInput = document.getElementById('tema');
+        if (temaInput) {
+            temaInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.pedirIA();
+                }
+            });
+        }
     }
 
     // Navegación entre slides
