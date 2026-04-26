@@ -186,10 +186,18 @@ class ExamGenerator {
         document.getElementById('txt-match').value = 'Generando emparejamientos...';
 
         try {
+            // Obtener el HTML del examen generado para pasarlo como contexto al quiz
+            const resultadoDiv = document.getElementById('resultado');
+            const htmlExamen = resultadoDiv ? resultadoDiv.innerHTML : '';
+
             const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tema, tipo: this.examType })
+                body: JSON.stringify({ 
+                    tema, 
+                    tipo: this.examType,
+                    htmlExamen: htmlExamen || '' 
+                })
             });
 
             if (!response.ok) {
