@@ -44,6 +44,7 @@
         .portada-logos {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 30px;
             margin-bottom: 30px;
             z-index: 1;
@@ -645,7 +646,7 @@
         }
 
         @media print {
-            @page { size: A4; margin: 20mm 15mm; }
+            @page { size: A4; margin: 0; }
             #slide-1, #slide-3, .controles { display: none !important; } 
             #slide-2 { display: block; }
             body { background: none; }
