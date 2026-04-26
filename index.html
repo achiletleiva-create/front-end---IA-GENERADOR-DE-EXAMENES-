@@ -876,6 +876,7 @@
                 <button class="btn-copy" onclick="copyText('txt-match')"><i class="fas fa-copy"></i> Copiar Correspondencia</button>
             </div>
         </div>
+        <div id="validacion-quiz-info" style="max-width:1000px; margin:10px auto 0; padding:0 20px;"></div>
     </div>
 
     <!-- SLIDE 4: ASISTENTE CORRECTOR -->
@@ -1001,23 +1002,31 @@
         }
 
         async function pedirQuiz() {
-            const tema = document.getElementById('tema').value;
-            const txtMult = document.getElementById('txt-multiple');
-            const txtMatch = document.getElementById('txt-match');
-            txtMult.value = "Generando 10 preguntas de opción múltiple...";
-            txtMatch.value = "Generando 10 preguntas de correspondencia...";
-            
-            try {
-                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ tema: tema, tipo: tipoSeleccionado })
-                });
-                const data = await res.json();
-                txtMult.value = data.multiple;
-                txtMatch.value = data.match;
-            } catch (e) {
-                txtMult.value = "Error al conectar con el servidor.";
+            // Usar el método del app.js que incluye validación y contexto del examen
+            if (window.app && typeof window.app.generarQuiz === 'function') {
+                await window.app.generarQuiz();
+            } else {
+                // Fallback: llamada directa
+                const tema = document.getElementById('tema').value;
+                const txtMult = document.getElementById('txt-multiple');
+                const txtMatch = document.getElementById('txt-match');
+                txtMult.value = "Generando preguntas...";
+                txtMatch.value = "Generando emparejamientos...";
+                
+                try {
+                    const resultadoDiv = document.getElementById('resultado');
+                    const htmlExamen = resultadoDiv ? resultadoDiv.innerHTML : '';
+                    const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ tema, tipo: tipoSeleccionado, htmlExamen: htmlExamen || '' })
+                    });
+                    const data = await res.json();
+                    txtMult.value = data.multiple || '';
+                    txtMatch.value = data.match || '';
+                } catch (e) {
+                    txtMult.value = "Error al conectar con el servidor.";
+                }
             }
         }
 

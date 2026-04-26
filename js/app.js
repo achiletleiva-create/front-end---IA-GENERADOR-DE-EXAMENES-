@@ -212,11 +212,62 @@ class ExamGenerator {
 
             document.getElementById('txt-multiple').value = data.multiple || '';
             document.getElementById('txt-match').value = data.match || '';
+
+            // Mostrar información de validación si está disponible
+            if (data.validacion) {
+                this.mostrarValidacionQuiz(data.validacion);
+            }
             
         } catch (error) {
             console.error('Error al generar quiz:', error);
             this.mostrarError('Error al generar quiz: ' + error.message);
         }
+    }
+
+    /**
+     * Muestra información de validación del quiz en la interfaz.
+     */
+    mostrarValidacionQuiz(validacion) {
+        const container = document.getElementById('validacion-quiz-info');
+        if (!container) return;
+
+        const vMultiple = validacion.multiple || {};
+        const vMatch = validacion.match || {};
+
+        let html = '<div style="margin-top:10px; padding:10px; border-radius:5px; font-size:12px;">';
+
+        // Opción múltiple
+        if (vMultiple.valido) {
+            html += `<div style="color:#2e7d32; margin-bottom:5px;">✅ Opción Múltiple: Válido (${vMultiple.intentos || 1} intento(s))</div>`;
+        } else {
+            html += `<div style="color:#c62828; margin-bottom:5px;">❌ Opción Múltiple: Con errores (${vMultiple.intentos || 1} intento(s))</div>`;
+            if (vMultiple.errores && vMultiple.errores.length > 0) {
+                html += `<ul style="margin:2px 0 8px 15px; color:#c62828;">`;
+                vMultiple.errores.forEach(e => { html += `<li>${e}</li>`; });
+                html += `</ul>`;
+            }
+        }
+        if (vMultiple.resumen) {
+            html += `<div style="color:#555; margin-bottom:8px;">${vMultiple.resumen.replace(/\n/g, '<br>')}</div>`;
+        }
+
+        // Match
+        if (vMatch.valido) {
+            html += `<div style="color:#2e7d32; margin-bottom:5px;">✅ Correspondencia: Válido (${vMatch.intentos || 1} intento(s))</div>`;
+        } else {
+            html += `<div style="color:#c62828; margin-bottom:5px;">❌ Correspondencia: Con errores (${vMatch.intentos || 1} intento(s))</div>`;
+            if (vMatch.errores && vMatch.errores.length > 0) {
+                html += `<ul style="margin:2px 0 8px 15px; color:#c62828;">`;
+                vMatch.errores.forEach(e => { html += `<li>${e}</li>`; });
+                html += `</ul>`;
+            }
+        }
+        if (vMatch.resumen) {
+            html += `<div style="color:#555; margin-bottom:8px;">${vMatch.resumen.replace(/\n/g, '<br>')}</div>`;
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
     }
 
     // Manejo de archivos
@@ -469,8 +520,9 @@ class ExamGenerator {
     }
 }
 
-// Inicializar la aplicación
+// Inicializar la aplicación y exponerla globalmente
 const app = new ExamGenerator();
+window.app = app;
 
 // Funciones globales para compatibilidad con HTML existente
 function seleccionarExamen(tipo, titulo) {
