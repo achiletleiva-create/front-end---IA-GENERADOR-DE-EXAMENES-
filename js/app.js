@@ -127,10 +127,14 @@ class ExamGenerator {
             return;
         }
 
-        document.getElementById('resultado').innerHTML = '<p style="text-align:center;">Generando examen...</p>';
+        // Mostrar loading overlay
+        if (typeof mostrarLoading === 'function') {
+            mostrarLoading();
+            agregarLog('🚀 Iniciando generación de examen...', 'info');
+        }
 
         try {
-            const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen', {
+            const response = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-examen-stream', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tema, tipo: this.examType })
@@ -140,37 +144,79 @@ class ExamGenerator {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
 
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error);
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let htmlFinal = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.substring(6));
+
+                            if (data.mensaje && typeof agregarLog === 'function') {
+                                agregarLog(data.mensaje, data.tipo || 'info');
+                            }
+
+                            if (data.contenido) {
+                                htmlFinal = data.contenido;
+                            }
+
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+
+                            if (data.finalizado) {
+                                setTimeout(() => {
+                                    if (typeof ocultarLoading === 'function') {
+                                        ocultarLoading();
+                                    }
+
+                                    let htmlContent = htmlFinal;
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = htmlContent;
+                                    tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
+                                        h.style.textAlign = 'center';
+                                        h.style.textDecoration = 'underline';
+                                        h.style.color = '#1a237e';
+                                    });
+                                    document.getElementById('resultado').innerHTML = tempDiv.innerHTML;
+
+                                    const btnNuevo = document.getElementById('btn-nuevo-examen');
+                                    if (btnNuevo) btnNuevo.style.display = 'inline-flex';
+
+                                    if (this.examType === 'pa1' || this.examType === 'parcial') {
+                                        const resultado = document.getElementById('resultado');
+                                        resultado.innerHTML = this.corregirHerramientasManuales(resultado.innerHTML);
+                                    }
+                                }, 1000);
+                            }
+                        } catch (parseError) {
+                            console.error('Error parseando log:', parseError);
+                        }
+                    }
+                }
             }
 
-            let htmlContent = data.html || data.contenido || data.content;
-            
-            // Forzar centrado y subrayado en todos los títulos del contenido generado
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
-                h.style.textAlign = 'center';
-                h.style.textDecoration = 'underline';
-                h.style.color = '#1a237e';
-            });
-            document.getElementById('resultado').innerHTML = tempDiv.innerHTML;
-            
-            // Mostrar el botón "Nuevo Examen" después de generar exitosamente
-            const btnNuevo = document.getElementById('btn-nuevo-examen');
-            if (btnNuevo) btnNuevo.style.display = 'inline-flex';
-            
-            // Aplicar correcciones si es necesario
-            if (this.examType === 'pa1' || this.examType === 'parcial') {
-                const resultado = document.getElementById('resultado');
-                resultado.innerHTML = this.corregirHerramientasManuales(resultado.innerHTML);
-            }
-            
         } catch (error) {
             console.error('Error al generar examen:', error);
-            this.mostrarError('Error al generar examen: ' + error.message);
+            if (typeof agregarLog === 'function') {
+                agregarLog('❌ Error: ' + error.message, 'error');
+            }
+            setTimeout(() => {
+                if (typeof ocultarLoading === 'function') {
+                    ocultarLoading();
+                }
+                this.mostrarError('Error al generar examen: ' + error.message);
+            }, 2000);
         }
     }
 
