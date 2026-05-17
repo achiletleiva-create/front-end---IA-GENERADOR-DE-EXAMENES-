@@ -977,6 +977,12 @@
                 });
                 const data = await res.json();
                 clearInterval(intervalo);
+                if (!res.ok) {
+                    throw new Error(data.error || `Error del servidor (${res.status})`);
+                }
+                if (!data.contenido) {
+                    throw new Error(data.error || 'El servidor no devolvió contenido.');
+                }
                 if (tipoSeleccionado === 'competencias') {
                     const ventana = window.open('', '_blank');
                     ventana.document.write(data.contenido);
@@ -997,7 +1003,7 @@
                 document.getElementById('btn-nuevo-examen').style.display = 'inline-flex';
             } catch (e) {
                 clearInterval(intervalo);
-                caja.innerHTML = "Error de conexión.";
+                caja.innerHTML = `<p style="text-align:center; color:#c62828; margin-top:50px;"><i class="fas fa-exclamation-triangle"></i> ${e.message || 'Error de conexión.'}</p>`;
             }
         }
 
