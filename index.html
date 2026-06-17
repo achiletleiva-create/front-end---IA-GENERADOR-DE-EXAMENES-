@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Exámenes UCV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
     <style>
         /* CONFIGURACIÓN GENERAL */
         body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; overflow-x: hidden; }
@@ -1116,10 +1117,11 @@
                     
                     if (tipoSeleccionado === 'competencias') {
                         const ventana = window.open('', '_blank');
-                        ventana.document.write(contenidoCompleto);
+                        // Sanitizar antes de escribir en la nueva ventana
+                        ventana.document.write(DOMPurify.sanitize(contenidoCompleto));
                         ventana.document.close();
                     } else {
-                        let html = contenidoCompleto.replace(/```html|```/g, "");
+                        let html = DOMPurify.sanitize(contenidoCompleto.replace(/```html|```/g, ""));
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
                         tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
@@ -1143,8 +1145,9 @@
                         errorMsg = data.error || errorMsg;
                     } catch (e) {}
                     
-                    caja.innerHTML = `<p style="text-align:center; color:#c62828; margin-top:50px;"><i class="fas fa-exclamation-triangle"></i> ${errorMsg}</p>`;
-                    agregarLog(errorMsg, 'error');
+                    const safeError = DOMPurify.sanitize(errorMsg);
+                    caja.innerHTML = `<p style="text-align:center; color:#c62828; margin-top:50px;"><i class="fas fa-exclamation-triangle"></i> ${safeError}</p>`;
+                    agregarLog(safeError, 'error');
                 });
                 
                 eventSource.onerror = () => {
@@ -1156,8 +1159,9 @@
                 
             } catch (e) {
                 ocultarLoading();
-                caja.innerHTML = `<p style="text-align:center; color:#c62828; margin-top:50px;"><i class="fas fa-exclamation-triangle"></i> ${e.message || 'Error de conexión.'}</p>`;
-                agregarLog(e.message || 'Error de conexión.', 'error');
+                const safeMsg = DOMPurify.sanitize(e.message || 'Error de conexión.');
+                caja.innerHTML = `<p style="text-align:center; color:#c62828; margin-top:50px;"><i class="fas fa-exclamation-triangle"></i> ${safeMsg}</p>`;
+                agregarLog(safeMsg, 'error');
             }
         }
 
@@ -1304,7 +1308,11 @@
             const caja = document.getElementById('chat-mensajes');
             const div = document.createElement('div');
             div.className = tipo === 'ia' ? 'msg-ia' : 'msg-user';
-            div.innerHTML = tipo === 'ia' ? contenido : `<span style="white-space:pre-wrap">${contenido}</span>`;
+            
+            // Sanitizar contenido antes de inyectar en innerHTML
+            const safeContenido = DOMPurify.sanitize(contenido);
+            div.innerHTML = tipo === 'ia' ? safeContenido : `<span style="white-space:pre-wrap">${safeContenido}</span>`;
+            
             caja.appendChild(div);
             scrollChat();
         }

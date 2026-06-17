@@ -180,7 +180,7 @@ class ExamGenerator {
                                         ocultarLoading();
                                     }
 
-                                    let htmlContent = htmlFinal;
+                                    let htmlContent = DOMPurify.sanitize(htmlFinal);
                                     const tempDiv = document.createElement('div');
                                     tempDiv.innerHTML = htmlContent;
                                     tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(h => {
@@ -313,7 +313,7 @@ class ExamGenerator {
         }
 
         html += '</div>';
-        container.innerHTML = html;
+        container.innerHTML = DOMPurify.sanitize(html);
     }
 
     // Manejo de archivos
