@@ -6,6 +6,14 @@
     <title>Generador de Exámenes UCV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script>
+        // ── API BASE: detecta si la app corre LOCAL o en GitHub Pages ──
+        // Local (localhost / file://) → backend propio en http://localhost:10000 (IA local Ollama, sin límites)
+        // GitHub Pages → backend en Render (comportamiento de siempre)
+        window.API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
+            ? 'http://localhost:10000'
+            : 'https://back-end-ia-generador-de-examenes.onrender.com';
+    </script>
     <style>
         /* CONFIGURACIÓN GENERAL */
         body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; color: #333; overflow-x: hidden; }
@@ -1097,7 +1105,7 @@
             agregarLog('Iniciando generación del examen...', 'info');
             
             try {
-                const eventSource = new EventSource(`https://back-end-ia-generador-de-examenes.onrender.com/generar-examen-stream?tema=${encodeURIComponent(tema)}&tipo=${tipoSeleccionado}`);
+                const eventSource = new EventSource(`${window.API_BASE}/generar-examen-stream?tema=${encodeURIComponent(tema)}&tipo=${tipoSeleccionado}`);
                 
                 let contenidoCompleto = '';
                 
@@ -1180,7 +1188,7 @@
                 try {
                     const resultadoDiv = document.getElementById('resultado');
                     const htmlExamen = resultadoDiv ? resultadoDiv.innerHTML : '';
-                    const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/generar-quiz', {
+                    const res = await fetch(window.API_BASE + '/generar-quiz', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ tema, tipo: tipoSeleccionado, htmlExamen: htmlExamen || '' })
@@ -1285,7 +1293,7 @@
             try {
                 const body = { mensajes: historialChat };
                 if (historialChat.length === 1) { body.imagen = archivoBase64; body.mimeType = archivoMime; }
-                const res = await fetch('https://back-end-ia-generador-de-examenes.onrender.com/resolver-examen', {
+                const res = await fetch(window.API_BASE + '/resolver-examen', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
