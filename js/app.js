@@ -1,10 +1,7 @@
 // JavaScript principal para la aplicación Generador de Exámenes UCV
 
-// ── API BASE ── (misma detección que index.html)
-// Local (localhost / file://) → http://localhost:10000 | GitHub Pages → Render
-const API_BASE = window.API_BASE || ((location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
-    ? 'http://localhost:10000'
-    : 'https://back-end-ia-generador-de-examenes.onrender.com');
+// ── API BASE ── la define index.html (window.API_BASE): Render por defecto, y
+// http://localhost:10000 si detecta la IA local (Ollama) corriendo en esta PC.
 
 class ExamGenerator {
     constructor() {
@@ -140,7 +137,7 @@ class ExamGenerator {
         }
 
         try {
-            const response = await fetch(API_BASE + '/generar-examen-stream', {
+            const response = await fetch(window.API_BASE + '/generar-examen-stream', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tema, tipo: this.examType })
@@ -242,7 +239,7 @@ class ExamGenerator {
             const resultadoDiv = document.getElementById('resultado');
             const htmlExamen = resultadoDiv ? resultadoDiv.innerHTML : '';
 
-            const response = await fetch(API_BASE + '/generar-quiz', {
+            const response = await fetch(window.API_BASE + '/generar-quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -393,7 +390,7 @@ class ExamGenerator {
         btnResolver.textContent = 'Resolviendo...';
 
         try {
-            const response = await fetch(API_BASE + '/resolver-examen', {
+            const response = await fetch(window.API_BASE + '/resolver-examen', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -7,12 +7,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
     <script>
-        // ── API BASE: detecta si la app corre LOCAL o en GitHub Pages ──
-        // Local (localhost / file://) → backend propio en http://localhost:10000 (IA local Ollama, sin límites)
-        // GitHub Pages → backend en Render (comportamiento de siempre)
+        // ── API BASE inteligente ─────────────────────────────────────────────
+        // Por defecto: backend en Render (comportamiento de siempre en la web).
+        // Al cargar la página verifica si en ESTA PC está corriendo la IA local
+        // (backend propio + Ollama). Si responde, cambia a http://localhost:10000
+        // para generar exámenes SIN límites de tokens. Si la PC está apagada o
+        // el backend no corre, sigue usando Render automáticamente.
         window.API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
             ? 'http://localhost:10000'
             : 'https://back-end-ia-generador-de-examenes.onrender.com';
+
+        (function detectarIALocal() {
+            if (window.API_BASE === 'http://localhost:10000') return; // ya corre local
+            const ctrl = new AbortController();
+            const t = setTimeout(() => ctrl.abort(), 2500);
+            fetch('http://localhost:10000/', { signal: ctrl.signal })
+                .then(r => (r.ok ? r.json() : Promise.reject(new Error('no ok'))))
+                .then(d => {
+                    clearTimeout(t);
+                    if (d && d.status === 'online') {
+                        window.API_BASE = 'http://localhost:10000';
+                        console.log('%c✅ IA LOCAL detectada en esta PC: se usará Ollama (sin límites de tokens).', 'color:green;font-weight:bold');
+                    }
+                })
+                .catch(() => clearTimeout(t)); // PC apagada / backend no corre → queda Render
+        })();
     </script>
     <style>
         /* CONFIGURACIÓN GENERAL */
